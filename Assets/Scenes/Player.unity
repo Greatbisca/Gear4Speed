@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 55171358}
   - component: {fileID: 55171357}
+  - component: {fileID: 55171359}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -216,6 +217,234 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &55171359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 55171356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
+--- !u!1 &201752403
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 201752405}
+  - component: {fileID: 201752404}
+  m_Layer: 0
+  m_Name: MapGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &201752404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201752403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3f954f62392154a9e339a712c67891, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Map_Gen
+  car: {fileID: 5243102254010514436, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+  tilesParent: {fileID: 0}
+  upTile: {fileID: 7186973598622725830, guid: e1c4c954a8fe7f54b9fae668eb98b547, type: 3}
+  downTile: {fileID: 9187729188640648755, guid: d6b2c946585ea9445b7e76e70695782a, type: 3}
+  rightTile: {fileID: 8990115823968408341, guid: 48763bffdc37d144fa3b3c4e45c3d6c9, type: 3}
+  leftTile: {fileID: 9083149248085872476, guid: 55752eea8d4fc2a4683ef9caa8f0147c, type: 3}
+  straightTile: {fileID: 1293127275693321746, guid: 43f50ec0972cb3d489960b35465356f0, type: 3}
+  upAttributes:
+    maxSpeedMultiplier: 0.7
+    minimumTorque: 1000
+    accelerationMultiplier: 0.7
+    curveDifficulty: 0
+  downAttributes:
+    maxSpeedMultiplier: 1.2
+    minimumTorque: 0
+    accelerationMultiplier: 1.15
+    curveDifficulty: 0
+  rightAttributes:
+    maxSpeedMultiplier: 1
+    minimumTorque: 0
+    accelerationMultiplier: 1
+    curveDifficulty: 0.5
+  leftAttributes:
+    maxSpeedMultiplier: 1
+    minimumTorque: 0
+    accelerationMultiplier: 1
+    curveDifficulty: 0.5
+  straightAttributes:
+    maxSpeedMultiplier: 1
+    minimumTorque: 0
+    accelerationMultiplier: 1
+    curveDifficulty: 0
+  tilesAhead: 4
+  tilesBehind: 1
+  maxTiles: 10000
+  tileLength: 10
+  verticalOffset: 0.577
+  startPosition: {x: 0, y: 0, z: 0}
+  startDirection: {x: 0, y: 0, z: 1}
+  randomizePath: 1
+  seed: 0
+--- !u!4 &201752405
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201752403}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.21017, y: -0, z: -1.60877}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &901241745 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8754758035542572363, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+  m_PrefabInstance: {fileID: 1330965599}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &901241750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 901241745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a48cb871908c3434c94520e6c7bf8e7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
+  handling: 1
+  acceleration: 7
+  baseSpeed: 9
+  currentGear: 1
+  gears:
+  - name: 1st
+    maximumSpeed: 3
+    maximumTorque: 1000
+  - name: 2nd
+    maximumSpeed: 6
+    maximumTorque: 700
+  - name: 3rd
+    maximumSpeed: 9
+    maximumTorque: 450
+--- !u!114 &901241751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 901241745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 148f0dfde13bf2d4092eddf9c50342cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CarController
+  mapGenerator: {fileID: 0}
+  playerStats: {fileID: 0}
+  straightRightOffset: 1.4
+  rightCurveInsideOffset: 1.4
+  leftCurveOutsideOffset: 1.4
+  roadClearance: 0.5
+  rotationSpeed: 8
+  curveRadius: 5
+--- !u!1001 &1330965599
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5243102254010514436, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5243102254010514436, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5243102254010514436, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5243102254010514436, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5243102254010514436, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5243102254010514436, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5243102254010514436, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5243102254010514436, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5243102254010514436, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5243102254010514436, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8754758035542572363, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+      propertyPath: m_Name
+      value: Car_1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8754758035542572363, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 901241751}
+    - targetCorrespondingSourceObject: {fileID: 8754758035542572363, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 901241750}
+  m_SourcePrefab: {fileID: 100100000, guid: ce5c8de68976e0847a1bf90004a3df5a, type: 3}
 --- !u!1 &1859632197
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,6 +456,8 @@ GameObject:
   - component: {fileID: 1859632200}
   - component: {fileID: 1859632199}
   - component: {fileID: 1859632198}
+  - component: {fileID: 1859632202}
+  - component: {fileID: 1859632201}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -308,9 +539,75 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1859632201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1859632197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ebd0ab4cb146fc46a3f6c592c06ae8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CarCameraFollow
+  target: {fileID: 901241751}
+  rightOffset: 8
+  behindOffset: 6
+  heightOffset: 8
+  lookAhead: 3
+  lookHeight: 0.5
+  positionSmoothTime: 0.15
+  rotationSmoothSpeed: 8
+--- !u!114 &1859632202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1859632197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1859632200}
   - {fileID: 55171358}
+  - {fileID: 201752405}
+  - {fileID: 1330965599}
