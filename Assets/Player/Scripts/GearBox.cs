@@ -1,50 +1,89 @@
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
+#endif
 
 public enum ShiftZone { None, Red, Yellow, Green }
 
 public class Gearbox : MonoBehaviour
 {
-    public int gearCount = 4;
-    public float firstGearSpeedPerRpm = 0.005f;
-    public float[] accelerations = { 3f, 2.5f, 2f, 1.5f };
+    [System.Serializable]
+    public class GearSetting
+    {
+        public string name = "Gear";
+        [Tooltip("Top speed in this gear, in m/s (reached at the RPM limiter).")]
+        public float maxSpeed = 12f;
+        [Tooltip("Acceleration in this gear, in m/s2.")]
+        public float acceleration = 4f;
+    }
     
+    public GearSetting[] gears =
+    {
+        new GearSetting { name = "1st", maxSpeed = 12f,   acceleration = 4f   },
+        new GearSetting { name = "2nd", maxSpeed = 18f,   acceleration = 3.5f },
+        new GearSetting { name = "3rd", maxSpeed = 27f,   acceleration = 3f   },
+        new GearSetting { name = "4th", maxSpeed = 40.5f, acceleration = 2.5f },
+    };
+
     public float idleRpm = 800f;
-    public float shiftPromptRpm = 3000f;
+    public float shiftPromptRpm = 3000f;     // upshift prompt
+    public float downshiftPromptRpm = 1200f; // downshift prompt
     public float limiterRpm = 4000f;
-    
-    public float zoneMinRpm = 2000f;     // zone always stays inside this range...
-    public float zoneMaxRpm = 3000f;     // ...and this one
-    public float zoneLead = 500f;        // how far below the needle the zone appears
+
+    [Header("Lugging (low RPM = weak acceleration)")]
+    public float powerRpm = 1500f;           // full power from here upwards
+    [Range(0f, 1f)] public float lugFactor = 0.25f;
+
+    [Header("Counter-rotation: upshift (needle falls)")]
+    public float zoneMinRpm = 2000f;
+    public float zoneMaxRpm = 3000f;
+
+    [Header("Counter-rotation: downshift (needle rises)")]
+    public float downZoneMinRpm = 1800f;
+    public float downZoneMaxRpm = 3000f;
+
+    [Header("Counter-rotation: shared")]
+    public float zoneLead = 500f;            // how far ahead of the needle the zone appears
     public float greenHalfWidth = 100f;
     public float yellowHalfWidth = 250f;
-    public float fallRate = 400f;        // RPM per second while the needle falls
+    public float fallRate = 400f;            // RPM per second while the needle moves
 
     public int CurrentGear { get; private set; } = 1;
     public float Rpm { get; private set; }
     public bool InClutch { get; private set; }
-    public bool GearSelected { get; private set; }  // true = zone visible, needle falling
+    public bool GearSelected { get; private set; }
     public float ZoneCenter { get; private set; }
+    public bool LastShiftWasUp { get; private set; }
 
     public event System.Action<ShiftZone> Shifted;
 
-    float[] speedPerRpm;
+    int targetGear;
+    int shiftDir;
 
-    void Awake()
+    GearSetting Current => gears[CurrentGear - 1];
+    public int GearCount => gears.Length;
+    float SpeedPerRpm => Current.maxSpeed / limiterRpm;
+
+    public float MaxSpeed => Current.maxSpeed;
+    public float Acceleration =>
+        Current.acceleration * Mathf.Lerp(lugFactor, 1f, Mathf.InverseLerp(idleRpm, powerRpm, Rpm));
+
+    // 0 = no prompt, otherwise the gear the player should shift to
+    public int PromptGear
     {
-        float step = shiftPromptRpm / 2000f;   // 1.5: shift at 3k lands near 2k
-        speedPerRpm = new float[gearCount];
-        for (int i = 0; i < gearCount; i++)
-            speedPerRpm[i] = firstGearSpeedPerRpm * Mathf.Pow(step, i);
+        get
+        {
+            if (InClutch) return 0;
+            if (CurrentGear < GearCount && Rpm >= shiftPromptRpm) return CurrentGear + 1;
+            if (CurrentGear > 1 && Rpm <= downshiftPromptRpm)     return CurrentGear - 1;
+            return 0;
+        }
     }
+    public bool ShiftPromptActive => PromptGear != 0;
+    public int NextGear => PromptGear;
 
-    float Ratio => speedPerRpm[CurrentGear - 1];
-    public float Acceleration => accelerations[CurrentGear - 1];
-    public float MaxSpeed => limiterRpm * Ratio;
-    public bool ShiftPromptActive => !InClutch && CurrentGear < gearCount && Rpm >= shiftPromptRpm;
-    public int NextGear => CurrentGear + 1;
-
-    public void UpdateRpm(float speed) => Rpm = Mathf.Max(idleRpm, speed / Ratio);
+    public void UpdateRpm(float speed) =>
+        Rpm = Mathf.Clamp(speed / SpeedPerRpm, idleRpm, limiterRpm);
 
     public float GreenMin => ZoneCenter - greenHalfWidth;
     public float GreenMax => ZoneCenter + greenHalfWidth;
@@ -62,25 +101,34 @@ public class Gearbox : MonoBehaviour
     // --- Clutch flow ---
     public void PressClutch()
     {
-        if (CurrentGear >= gearCount) return;
         InClutch = true;
         GearSelected = false;
     }
 
-    // Called when the stick lands in the next gear
-    public void SelectGear()
+    // dir = +1 (up) or -1 (down): the stick landed in the next/previous gear
+    public void SelectGear(int dir)
     {
         if (!InClutch || GearSelected) return;
+        int g = CurrentGear + dir;
+        if (g < 1 || g > GearCount) return;
+
+        targetGear = g;
+        shiftDir = dir;
         GearSelected = true;
-        ZoneCenter = Mathf.Clamp(Rpm - zoneLead,
-                                 zoneMinRpm + yellowHalfWidth,
-                                 zoneMaxRpm - yellowHalfWidth);
+
+        if (dir > 0)
+            ZoneCenter = Mathf.Clamp(Rpm - zoneLead,
+                zoneMinRpm + yellowHalfWidth, zoneMaxRpm - yellowHalfWidth);
+        else
+            ZoneCenter = Mathf.Clamp(Rpm + zoneLead,
+                downZoneMinRpm + yellowHalfWidth, downZoneMaxRpm - yellowHalfWidth);
     }
 
-    // Called every frame by the car while the clutch is held
+    // Called every frame while the clutch is held
     public void TickClutch(float dt)
     {
-        if (GearSelected) Rpm = Mathf.Max(idleRpm, Rpm - fallRate * dt);
+        if (GearSelected)
+            Rpm = Mathf.Clamp(Rpm - shiftDir * fallRate * dt, idleRpm, limiterRpm);
     }
 
     public void ReleaseClutch()
@@ -91,19 +139,32 @@ public class Gearbox : MonoBehaviour
         if (!GearSelected) { Shifted?.Invoke(ShiftZone.None); return; }
 
         ShiftZone zone = ZoneFor(Rpm);
-        CurrentGear++;
+        CurrentGear = targetGear;
+        LastShiftWasUp = shiftDir > 0;
         GearSelected = false;
         Shifted?.Invoke(zone);
     }
 
-    // TEMP test controls: Space = clutch, Up Arrow = "stick landed in gear"
+    // TEMP test controls: Space = clutch, Up/Down arrow = stick into next/previous gear
     void Update()
     {
+        bool press, release, up, down;
+#if ENABLE_INPUT_SYSTEM
         var kb = Keyboard.current;
         if (kb == null) return;
-
-        if (kb.spaceKey.wasPressedThisFrame)   PressClutch();
-        if (kb.upArrowKey.wasPressedThisFrame) SelectGear();
-        if (kb.spaceKey.wasReleasedThisFrame)  ReleaseClutch();
+        press   = kb.spaceKey.wasPressedThisFrame;
+        release = kb.spaceKey.wasReleasedThisFrame;
+        up      = kb.upArrowKey.wasPressedThisFrame;
+        down    = kb.downArrowKey.wasPressedThisFrame;
+#else
+        press   = Input.GetKeyDown(KeyCode.Space);
+        release = Input.GetKeyUp(KeyCode.Space);
+        up      = Input.GetKeyDown(KeyCode.UpArrow);
+        down    = Input.GetKeyDown(KeyCode.DownArrow);
+#endif
+        if (press)   PressClutch();
+        if (up)      SelectGear(+1);
+        if (down)    SelectGear(-1);
+        if (release) ReleaseClutch();
     }
 }

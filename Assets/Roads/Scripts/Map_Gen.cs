@@ -7,7 +7,6 @@ public struct RoadTileAttributes
     [Min(0f)]
     public float maxSpeedMultiplier;
     [Min(0f)]
-    [Tooltip("Torque minimo necessario nesta tile, em Nm.")]
     public float minimumTorque;
     [Min(0f)]
     public float accelerationMultiplier;
@@ -138,13 +137,6 @@ public class Map_Gen : MonoBehaviour
             GameObject carObject = GameObject.FindGameObjectWithTag("Player");
             if (carObject != null)
                 car = carObject.transform;
-            else
-            {
-                CarController carController =
-                    FindFirstObjectByType<CarController>();
-                if (carController != null)
-                    car = carController.transform;
-            }
         }
 
         direction = CardinalDirection(startDirection);
