@@ -2,295 +2,121 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private Map_Gen mapGenerator;
-    [SerializeField] private Gearbox gearbox;
+    public Gearbox gearbox;
+    public CornerBraking corners;
+    public Map_Gen map;
+    
+    public float heightOffset = 0.5f;
 
-    [Header("Road position")]
-    [Min(0f)]
-    [SerializeField] private float straightRightOffset = 2.5f;
-    [Min(0f)]
-    [SerializeField] private float rightCurveInsideOffset = 2f;
-    [Min(0f)]
-    [SerializeField] private float leftCurveOutsideOffset = 2f;
+    public float clutchDrag = 0.8f;
+    public float greenBonus = 1f;          // m/s added on a green UPSHIFT
+    public float redPenalty = 0.85f;       // speed multiplier on a red shift
+    public float engineBrake = 5f;
 
-    [Header("Road clearance")]
-    [Min(0f)]
-    [SerializeField] private float roadClearance = 0.5f;
+    public float CurrentSpeed { get; private set; }   // m/s
+    public int TileIndex { get; private set; }
 
-    [Header("Movement")]
-    [SerializeField] private float rotationSpeed = 8f;
-    [SerializeField] private float curveRadius = 5f;
-    [Min(0f)]
-    [SerializeField] private float clutchDrag = 0.8f;
+    float t;   // progress along the current tile, 0..1
 
-    [Header("Shift results")]
-    [SerializeField] private float greenBonus = 1f;
-    [Range(0f, 1f)]
-    [SerializeField] private float redPenalty = 0.85f;
-
-    public float CurrentSpeed { get; private set; }
-
-    private float progress;
-    private int segmentIndex;
-
-    private void Awake()
+    void Awake()
     {
-        if (mapGenerator == null)
-            mapGenerator = FindFirstObjectByType<Map_Gen>();
-
-        if (gearbox == null)
-            gearbox = GetComponent<Gearbox>();
+        if (map == null) map = FindFirstObjectByType<Map_Gen>();
     }
 
-    private void OnEnable()
+    void Start()
     {
-        if (gearbox != null)
-            gearbox.Shifted += OnShifted;
+        TileIndex = 0;
+        t = 0f;
+        Place();
     }
 
-    private void OnDisable()
+    void OnEnable()  => gearbox.Shifted += OnShifted;
+    void OnDisable() => gearbox.Shifted -= OnShifted;
+
+    void OnShifted(ShiftZone zone)
     {
-        if (gearbox != null)
-            gearbox.Shifted -= OnShifted;
+        if (zone == ShiftZone.Green && gearbox.LastShiftWasUp) CurrentSpeed += greenBonus;
+        if (zone == ShiftZone.Red) CurrentSpeed *= redPenalty;
     }
 
-    private void OnValidate()
+    void Update()
     {
-        straightRightOffset = Mathf.Max(0f, straightRightOffset);
-        rightCurveInsideOffset = Mathf.Max(0f, rightCurveInsideOffset);
-        leftCurveOutsideOffset = Mathf.Max(0f, leftCurveOutsideOffset);
-        roadClearance = Mathf.Max(0f, roadClearance);
-        clutchDrag = Mathf.Max(0f, clutchDrag);
-        greenBonus = Mathf.Max(0f, greenBonus);
-        redPenalty = Mathf.Clamp01(redPenalty);
+        UpdateSpeed(Time.deltaTime);
+        FollowRoad(CurrentSpeed * Time.deltaTime);
     }
 
-    private void OnShifted(ShiftZone zone)
+    void UpdateSpeed(float dt)
     {
-        if (zone == ShiftZone.Green)
-            CurrentSpeed += greenBonus;
-        else if (zone == ShiftZone.Red)
-            CurrentSpeed *= redPenalty;
-    }
+        float cornerLimit = corners != null ? corners.SpeedLimit : float.PositiveInfinity;
+        float cornerBrake = corners != null ? corners.BrakeDecel : 0f;
+        float gearMax = gearbox.MaxSpeed;
 
-    private void Update()
-    {
-        if (mapGenerator == null || gearbox == null)
-            return;
+        float cap = Mathf.Min(gearMax, cornerLimit);
+        float brakeRate = cornerLimit < gearMax ? cornerBrake : engineBrake;
 
-        mapGenerator.UpdateStreaming(segmentIndex);
-
-        if (!mapGenerator.TryGetTilePath(
-                segmentIndex,
-                out RoadTilePath path))
-        {
-            return;
-        }
-
-        UpdateSpeed();
-
-        float segmentLength = Vector3.Distance(path.start, path.end);
-        if (segmentLength < 0.01f)
-            return;
-
-        AdvancePath(path, segmentLength);
-
-        Vector3 target = EvaluatePosition(path, progress);
-        target += Vector3.up * roadClearance;
-        Vector3 tangent = EvaluateTangent(path, progress);
-
-        if (tangent.sqrMagnitude < 0.001f)
-            return;
-
-        transform.position = target;
-
-        Quaternion targetRotation = Quaternion.LookRotation(
-            tangent.normalized,
-            Vector3.up
-        );
-        transform.rotation = Quaternion.Slerp(
-            transform.rotation,
-            targetRotation,
-            rotationSpeed * Time.deltaTime
-        );
-    }
-
-    private void UpdateSpeed()
-    {
         if (gearbox.InClutch)
         {
-            gearbox.TickClutch(Time.deltaTime);
-            CurrentSpeed = Mathf.Max(
-                0f,
-                CurrentSpeed - clutchDrag * Time.deltaTime
-            );
-            return;
+            gearbox.TickClutch(dt);
+            CurrentSpeed = Mathf.Max(0f, CurrentSpeed - clutchDrag * dt);
+            if (CurrentSpeed > cornerLimit)   // corners still slow you down on the clutch
+                CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, cornerLimit, cornerBrake * dt);
         }
-
-        CurrentSpeed = Mathf.Min(
-            CurrentSpeed + gearbox.Acceleration * Time.deltaTime,
-            gearbox.MaxSpeed
-        );
-        gearbox.UpdateRpm(CurrentSpeed);
-    }
-
-    private void AdvancePath(RoadTilePath path, float segmentLength)
-    {
-        float remainingDistance = CurrentSpeed * Time.deltaTime;
-
-        while (remainingDistance > 0f)
+        else
         {
-            float remainingSegment =
-                (1f - progress) * segmentLength;
+            if (CurrentSpeed > cap)     // above the corner limit or the gear's top speed
+                CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, cap, brakeRate * dt);
+            else
+                CurrentSpeed = Mathf.Min(CurrentSpeed + gearbox.Acceleration * dt, cap);
 
-            if (remainingDistance < remainingSegment)
-            {
-                progress += remainingDistance / segmentLength;
-                return;
-            }
-
-            remainingDistance -= remainingSegment;
-            progress = 0f;
-            segmentIndex++;
-            mapGenerator.UpdateStreaming(segmentIndex);
-
-            if (!mapGenerator.TryGetTilePath(
-                    segmentIndex,
-                    out path))
-            {
-                remainingDistance = 0f;
-                return;
-            }
-
-            segmentLength = Vector3.Distance(path.start, path.end);
-            if (segmentLength < 0.01f)
-            {
-                remainingDistance = 0f;
-                return;
-            }
+            gearbox.UpdateRpm(CurrentSpeed);
         }
     }
 
-    private Vector3 EvaluatePosition(RoadTilePath path, float value)
+    // ---------- Road following ----------
+    void FollowRoad(float distance)
     {
-        if (!IsCurve(path.type))
+        if (map == null) return;
+
+        while (true)
         {
-            Vector3 start = GetOffsetPosition(
-                path.start,
-                path.entryDirection,
-                straightRightOffset
-            );
-            Vector3 end = GetOffsetPosition(
-                path.end,
-                path.entryDirection,
-                straightRightOffset
-            );
-            return Vector3.Lerp(start, end, value);
+            if (!map.TryGetTilePath(TileIndex, out RoadTilePath p)) return;
+            GetCurve(p, out _, out _, out _, out float len);
+
+            float remaining = (1f - t) * len;
+            if (distance < remaining) { t += distance / len; break; }
+
+            distance -= remaining;
+            TileIndex++;
+            t = 0f;
         }
 
-        return EvaluateCurvePosition(path, value);
+        map.UpdateStreaming(TileIndex);
+        Place();
     }
 
-    private Vector3 EvaluateTangent(RoadTilePath path, float value)
+    void Place()
     {
-        if (!IsCurve(path.type))
-        {
-            Vector3 start = GetOffsetPosition(
-                path.start,
-                path.entryDirection,
-                straightRightOffset
-            );
-            Vector3 end = GetOffsetPosition(
-                path.end,
-                path.entryDirection,
-                straightRightOffset
-            );
-            return end - start;
-        }
+        if (map == null || !map.TryGetTilePath(TileIndex, out RoadTilePath p)) return;
+        GetCurve(p, out Vector3 s, out Vector3 c, out Vector3 e, out _);
 
-        return EvaluateCurveTangent(path, value);
+        Vector3 pos = (1 - t) * (1 - t) * s + 2 * (1 - t) * t * c + t * t * e;
+        Vector3 tangent = 2 * (1 - t) * (c - s) + 2 * t * (e - c);
+
+        transform.position = pos + Vector3.up * heightOffset;
+        if (tangent.sqrMagnitude > 0.0001f)
+            transform.rotation = Quaternion.LookRotation(tangent, Vector3.up);
     }
 
-    private Vector3 EvaluateCurvePosition(RoadTilePath path, float value)
+    static void GetCurve(RoadTilePath p, out Vector3 s, out Vector3 c, out Vector3 e, out float len)
     {
-        Vector3 center = GetCurveCenter(path);
-        float baseRadius = Vector3.Distance(center, path.start);
-        float radius = GetCurveRadius(path, baseRadius);
-        Vector3 radial = path.start - center;
-        float angle = Mathf.Atan2(radial.z, radial.x);
-        float angleChange = path.type == RoadTileType.Right
-            ? -Mathf.PI * 0.5f
-            : Mathf.PI * 0.5f;
-        float currentAngle = angle + angleChange * value;
-        Vector3 position = center + new Vector3(
-            Mathf.Cos(currentAngle) * radius,
-            0f,
-            Mathf.Sin(currentAngle) * radius
-        );
-        position.y = Mathf.Lerp(path.start.y, path.end.y, value);
-        return position;
-    }
+        s = p.start;
+        e = p.end;
+        bool corner = p.type == RoadTileType.Left || p.type == RoadTileType.Right;
 
-    private Vector3 EvaluateCurveTangent(RoadTilePath path, float value)
-    {
-        Vector3 center = GetCurveCenter(path);
-        float baseRadius = Vector3.Distance(center, path.start);
-        float radius = GetCurveRadius(path, baseRadius);
-        Vector3 radial = path.start - center;
-        float angle = Mathf.Atan2(radial.z, radial.x);
-        float angleChange = path.type == RoadTileType.Right
-            ? -Mathf.PI * 0.5f
-            : Mathf.PI * 0.5f;
-        float currentAngle = angle + angleChange * value;
-        return new Vector3(
-            -Mathf.Sin(currentAngle) * angleChange * radius,
-            path.end.y - path.start.y,
-            Mathf.Cos(currentAngle) * angleChange * radius
-        );
-    }
+        c = corner
+            ? s + p.entryDirection * (Vector3.Distance(s, e) / Mathf.Sqrt(2f))
+            : (s + e) * 0.5f;
 
-    private Vector3 GetCurveCenter(RoadTilePath path)
-    {
-        Vector3 turnSide = path.type == RoadTileType.Right
-            ? GetRight(path.entryDirection)
-            : -GetRight(path.entryDirection);
-        return path.start + turnSide * curveRadius;
-    }
-
-    private float GetCurveRadius(RoadTilePath path, float baseRadius)
-    {
-        if (path.type == RoadTileType.Right)
-        {
-            return Mathf.Max(
-                0.1f,
-                baseRadius - rightCurveInsideOffset
-            );
-        }
-
-        return baseRadius + leftCurveOutsideOffset;
-    }
-
-    private static Vector3 GetOffsetPosition(
-        Vector3 position,
-        Vector3 direction,
-        float offset)
-    {
-        Vector3 right = Vector3.Cross(
-            Vector3.up,
-            direction
-        ).normalized;
-        return position + right * offset;
-    }
-
-    private static Vector3 GetRight(Vector3 direction)
-    {
-        return Vector3.Cross(Vector3.up, direction).normalized;
-    }
-
-    private static bool IsCurve(RoadTileType type)
-    {
-        return type == RoadTileType.Right ||
-               type == RoadTileType.Left;
+        len = (Vector3.Distance(s, e) + Vector3.Distance(s, c) + Vector3.Distance(c, e)) * 0.5f;
     }
 }
