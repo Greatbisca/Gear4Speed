@@ -5,14 +5,10 @@ public enum ShiftZone { None, Red, Yellow, Green }
 
 public class Gearbox : MonoBehaviour
 {
-    public int gearCount = 4;
-    public float firstGearSpeedPerRpm = 0.005f;
-    public float[] accelerations = { 3f, 2.5f, 2f, 1.5f };
-    
-    public float idleRpm = 800f;
+    [SerializeField] private CarStats carStats;
+    [SerializeField] private EngineStats engineStats;
+
     public float shiftPromptRpm = 3000f;
-    public float limiterRpm = 4000f;
-    
     public float zoneMinRpm = 2000f;     // zone always stays inside this range...
     public float zoneMaxRpm = 3000f;     // ...and this one
     public float zoneLead = 500f;        // how far below the needle the zone appears
@@ -28,23 +24,112 @@ public class Gearbox : MonoBehaviour
 
     public event System.Action<ShiftZone> Shifted;
 
-    float[] speedPerRpm;
-
-    void Awake()
+    private void Awake()
     {
-        float step = shiftPromptRpm / 2000f;   // 1.5: shift at 3k lands near 2k
-        speedPerRpm = new float[gearCount];
-        for (int i = 0; i < gearCount; i++)
-            speedPerRpm[i] = firstGearSpeedPerRpm * Mathf.Pow(step, i);
+        if (carStats == null)
+        {
+            carStats = ScriptableObject.CreateInstance<CarStats>();
+            Debug.LogWarning(
+                "Gearbox nao tem um CarStats atribuido. " +
+                "Foi criado um perfil temporario com valores default.",
+                this
+            );
+        }
+
+        if (engineStats == null)
+        {
+            engineStats = ScriptableObject.CreateInstance<EngineStats>();
+            Debug.LogWarning(
+                "Gearbox nao tem um EngineStats atribuido. " +
+                "Foi criado um perfil temporario com valores default.",
+                this
+            );
+        }
     }
 
-    float Ratio => speedPerRpm[CurrentGear - 1];
-    public float Acceleration => accelerations[CurrentGear - 1];
-    public float MaxSpeed => limiterRpm * Ratio;
-    public bool ShiftPromptActive => !InClutch && CurrentGear < gearCount && Rpm >= shiftPromptRpm;
-    public int NextGear => CurrentGear + 1;
+    private int GearCount =>
+        carStats == null ? 1 : Mathf.Max(1, carStats.gearCount);
 
-    public void UpdateRpm(float speed) => Rpm = Mathf.Max(idleRpm, speed / Ratio);
+    private float CurrentGearRatio
+    {
+        get
+        {
+            if (carStats == null ||
+                carStats.gearRatios == null ||
+                carStats.gearRatios.Length == 0)
+                return 1f;
+
+            int index = Mathf.Clamp(
+                CurrentGear - 1,
+                0,
+                carStats.gearRatios.Length - 1
+            );
+            return carStats.gearRatios[index] *
+                   carStats.finalDriveRatio;
+        }
+    }
+
+    private float TopGearRatio
+    {
+        get
+        {
+            if (carStats == null ||
+                carStats.gearRatios == null ||
+                carStats.gearRatios.Length == 0)
+                return 1f;
+
+            return carStats.gearRatios[
+                carStats.gearRatios.Length - 1
+            ] * carStats.finalDriveRatio;
+        }
+    }
+
+    public float Acceleration
+    {
+        get
+        {
+            if (carStats == null || engineStats == null)
+                return 0f;
+
+            float torqueFactor = engineStats.GetTorque(Rpm) /
+                                 Mathf.Max(0.01f, engineStats.maximumTorque);
+            float gearFactor = CurrentGearRatio /
+                               Mathf.Max(0.01f, TopGearRatio);
+            return carStats.acceleration * torqueFactor * gearFactor;
+        }
+    }
+
+    public float MaxSpeed
+    {
+        get
+        {
+            if (carStats == null || engineStats == null)
+                return 0f;
+
+            float topSpeed = carStats.maximumVelocity / 3.6f;
+            return topSpeed * TopGearRatio /
+                   Mathf.Max(0.01f, CurrentGearRatio);
+        }
+    }
+
+    public float CurrentTorque =>
+        engineStats == null ? 0f : engineStats.GetTorque(Rpm);
+
+    public bool ShiftPromptActive =>
+        !InClutch && CurrentGear < GearCount && Rpm >= shiftPromptRpm;
+    public int NextGear => Mathf.Min(CurrentGear + 1, GearCount);
+
+    public void UpdateRpm(float speed)
+    {
+        if (engineStats == null)
+            return;
+
+        Rpm = Mathf.Clamp(
+            speed / Mathf.Max(0.01f, MaxSpeed) * engineStats.limiterRpm,
+            engineStats.idleRpm,
+            engineStats.limiterRpm
+        );
+    }
 
     public float GreenMin => ZoneCenter - greenHalfWidth;
     public float GreenMax => ZoneCenter + greenHalfWidth;
@@ -62,7 +147,7 @@ public class Gearbox : MonoBehaviour
     // --- Clutch flow ---
     public void PressClutch()
     {
-        if (CurrentGear >= gearCount) return;
+        if (CurrentGear >= GearCount) return;
         InClutch = true;
         GearSelected = false;
     }
@@ -80,7 +165,13 @@ public class Gearbox : MonoBehaviour
     // Called every frame by the car while the clutch is held
     public void TickClutch(float dt)
     {
-        if (GearSelected) Rpm = Mathf.Max(idleRpm, Rpm - fallRate * dt);
+        if (GearSelected && engineStats != null)
+        {
+            Rpm = Mathf.Max(
+                engineStats.idleRpm,
+                Rpm - fallRate * dt
+            );
+        }
     }
 
     public void ReleaseClutch()
