@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     public Map_Gen map;
     
     public float heightOffset = 0.5f;
+    public float lateralOffset = 1.5f;
 
     public float clutchDrag = 0.8f;
     public float greenBonus = 1f;          // m/s added on a green UPSHIFT
@@ -102,9 +103,13 @@ public class PlayerController : MonoBehaviour
         Vector3 pos = (1 - t) * (1 - t) * s + 2 * (1 - t) * t * c + t * t * e;
         Vector3 tangent = 2 * (1 - t) * (c - s) + 2 * t * (e - c);
 
-        transform.position = pos + Vector3.up * heightOffset;
         if (tangent.sqrMagnitude > 0.0001f)
-            transform.rotation = Quaternion.LookRotation(tangent, Vector3.up);
+        {
+            Quaternion rot = Quaternion.LookRotation(tangent, Vector3.up);
+            transform.rotation = rot;
+            pos += rot * Vector3.right * lateralOffset;   // shift into the lane
+        }
+        transform.position = pos + Vector3.up * heightOffset;
     }
 
     static void GetCurve(RoadTilePath p, out Vector3 s, out Vector3 c, out Vector3 e, out float len)
