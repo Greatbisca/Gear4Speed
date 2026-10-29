@@ -16,7 +16,7 @@ public class Gearbox : MonoBehaviour
         [Tooltip("Acceleration in this gear, in m/s2.")]
         public float acceleration = 4f;
     }
-    
+
     public GearSetting[] gears =
     {
         new GearSetting { name = "1st", maxSpeed = 12f,   acceleration = 4f   },
@@ -56,6 +56,8 @@ public class Gearbox : MonoBehaviour
     public bool LastShiftWasUp { get; private set; }
 
     public event System.Action<ShiftZone> Shifted;
+    public event System.Action ClutchPressed;     // clutch pressed
+    public event System.Action<int> GearPicked;   // stick moved: +1 = up, -1 = down
 
     int targetGear;
     int shiftDir;
@@ -75,7 +77,7 @@ public class Gearbox : MonoBehaviour
         {
             if (InClutch) return 0;
             if (CurrentGear < GearCount && Rpm >= shiftPromptRpm) return CurrentGear + 1;
-            if (CurrentGear > 1 && Rpm <= downshiftPromptRpm)     return CurrentGear - 1;
+            if (CurrentGear > 1 && Rpm <= downshiftPromptRpm) return CurrentGear - 1;
             return 0;
         }
     }
@@ -93,7 +95,7 @@ public class Gearbox : MonoBehaviour
     public ShiftZone ZoneFor(float rpm)
     {
         float d = Mathf.Abs(rpm - ZoneCenter);
-        if (d <= greenHalfWidth)  return ShiftZone.Green;
+        if (d <= greenHalfWidth) return ShiftZone.Green;
         if (d <= yellowHalfWidth) return ShiftZone.Yellow;
         return ShiftZone.Red;
     }
@@ -103,6 +105,7 @@ public class Gearbox : MonoBehaviour
     {
         InClutch = true;
         GearSelected = false;
+        ClutchPressed?.Invoke();
     }
 
     // dir = +1 (up) or -1 (down): the stick landed in the next/previous gear
@@ -122,6 +125,8 @@ public class Gearbox : MonoBehaviour
         else
             ZoneCenter = Mathf.Clamp(Rpm + zoneLead,
                 downZoneMinRpm + yellowHalfWidth, downZoneMaxRpm - yellowHalfWidth);
+
+        GearPicked?.Invoke(dir);
     }
 
     // Called every frame while the clutch is held
@@ -152,19 +157,19 @@ public class Gearbox : MonoBehaviour
 #if ENABLE_INPUT_SYSTEM
         var kb = Keyboard.current;
         if (kb == null) return;
-        press   = kb.spaceKey.wasPressedThisFrame;
+        press = kb.spaceKey.wasPressedThisFrame;
         release = kb.spaceKey.wasReleasedThisFrame;
-        up      = kb.upArrowKey.wasPressedThisFrame;
-        down    = kb.downArrowKey.wasPressedThisFrame;
+        up = kb.upArrowKey.wasPressedThisFrame;
+        down = kb.downArrowKey.wasPressedThisFrame;
 #else
         press   = Input.GetKeyDown(KeyCode.Space);
         release = Input.GetKeyUp(KeyCode.Space);
         up      = Input.GetKeyDown(KeyCode.UpArrow);
         down    = Input.GetKeyDown(KeyCode.DownArrow);
 #endif
-        if (press)   PressClutch();
-        if (up)      SelectGear(+1);
-        if (down)    SelectGear(-1);
+        if (press) PressClutch();
+        if (up) SelectGear(+1);
+        if (down) SelectGear(-1);
         if (release) ReleaseClutch();
     }
 }
