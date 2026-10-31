@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 665819088593216294}
   - component: {fileID: 8321977890201460808}
+  - component: {fileID: 3601321364876148712}
   m_Layer: 5
   m_Name: UIDocument
   m_TagString: Untagged
@@ -55,3 +56,20 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
+--- !u!114 &3601321364876148712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8322238947764832443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e28e6d55847916a45b260ad97ecb2762, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  acelarador_normal: {fileID: 2800000, guid: b140abc97e4b4024697a9f51bcb7af95, type: 3}
+  acelarador_pressed: {fileID: 2800000, guid: a8560d55b2dfbd34d95a3bfa7bd2ebb5, type: 3}
+  manipulo_normal: {fileID: 2800000, guid: c842f00e778889f4d8d97771d990c416, type: 3}
+  manipulo_up: {fileID: 2800000, guid: 0dad8cb09ddf61643977f0304e062897, type: 3}
+  manipulo_down: {fileID: 2800000, guid: f74e5747e29082d47ac3bf685a09d1c5, type: 3}
