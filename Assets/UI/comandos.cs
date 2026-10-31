@@ -4,16 +4,23 @@ using UnityEngine.InputSystem;
 
 public class comandos : MonoBehaviour
 {
+	[SerializeField] private Image m_ecra;
 	[SerializeField] private Image m_acelarador;
 	[SerializeField] private Image m_manipulo;
 	[SerializeField] private Image m_upgrade5;
 	[SerializeField] private Image m_upgrade6;
 	
+	//-------------------------------------------------------//
 	[SerializeField] private Texture2D acelarador_normal;
 	[SerializeField] private Texture2D acelarador_pressed;
+	
 	[SerializeField] private Texture2D manipulo_normal;
 	[SerializeField] private Texture2D manipulo_up;
 	[SerializeField] private Texture2D manipulo_down;
+	
+	[SerializeField] private Texture2D ecra_mudancas;
+	[SerializeField] private Texture2D ecra_UP5;
+	[SerializeField] private Texture2D ecra_UP6;
 	
 	//Define posição do manipulo das mudanças
 	Vector2Int posicao = new Vector2Int(0, 0);
@@ -49,19 +56,23 @@ public class comandos : MonoBehaviour
 		m_manipulo = UI.rootVisualElement.Q<Image>("manipulo");
 		m_upgrade5 = UI.rootVisualElement.Q<Image>("upgrade_5");
 		m_upgrade6 = UI.rootVisualElement.Q<Image>("upgrade_6");
-		
+		m_ecra = UI.rootVisualElement.Q<Image>("gearscreen");
 		//posição inicial do manipuço
 		m_manipulo.style.left = posicoes[0].x;
 		m_manipulo.style.bottom = posicoes[0].y;
+		
+		m_manipulo.style.backgroundImage = new StyleBackground(ecra_mudancas);	
     }
 
     void Update() {
 		//Verificação upgrades caixa
 		if (m_upgrade5.resolvedStyle.opacity == 1f){
 			limite_horizontal.y = 3;
+			m_ecra.style.backgroundImage = new StyleBackground(ecra_UP5);
 		}
 		if (m_upgrade6.resolvedStyle.opacity == 1f){
 			up6 = true;
+			m_ecra.style.backgroundImage = new StyleBackground(ecra_UP6);
 		}
 		
 		//------Definir posição nas mudanças------//
@@ -144,6 +155,7 @@ public class comandos : MonoBehaviour
 			m_manipulo.style.backgroundImage = new StyleBackground(manipulo_normal);
 		}
 		
+
 		//------Mudar imagem do pedal------//
         if (Keyboard.current.spaceKey.isPressed && m_acelarador != null)
 		{
