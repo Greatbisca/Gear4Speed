@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, ISpeedSource
 {
     public Gearbox gearbox;
     public CornerBraking corners;
@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public float greenBonus = 1f;          // m/s added on a green UPSHIFT
     public float redPenalty = 0.85f;       // speed multiplier on a red shift
     public float engineBrake = 5f;
+
 
     public float CurrentSpeed { get; private set; }   // m/s
     public int TileIndex { get; private set; }
