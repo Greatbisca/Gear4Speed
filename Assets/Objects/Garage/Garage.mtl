@@ -1,0 +1,204 @@
+# Blender 4.4.3 MTL File: 'None'
+# www.blender.org
+
+newmtl dec_damage_wall
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd C:/dec_damage_wall_Color.png
+map_d C:/dec_damage_wall_Mask.png
+map_Bump -bm 1.000000 C:/dec_damage_wall_Normal.png
+
+newmtl dec_garage_sewage
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd C:/dec_garage_sewage_BaseColor.png
+map_Ns C:/dec_garage_sewage_Roughness.png
+map_refl C:/dec_garage_sewage_Metallic.png
+map_d C:/dec_garage_sewage_BaseColor.png
+map_Bump -bm 1.000000 C:/dec_garage_sewage_Normal.png
+
+newmtl mat_concrete_wall
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd Garage.fbm/Material_Base_color.png
+map_Ns Garage.fbm/Material_Roughness.png
+map_Bump -bm 1.000000 Garage.fbm/Material_Normal_OpenGL.png
+
+newmtl mat_concrete_wall.001
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/Garage_wall_mat_concrete_wall.001_BaseColor.png
+map_Ns C:/Garage_wall_mat_concrete_wall.001_Roughness.png
+map_Bump -bm 1.000000 C:/Garage_wall_mat_concrete_wall.001_Normal.png
+
+newmtl mat_garage_cable
+Ns 130.401230
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd C:/mat_garage_cable_Base_color.png
+map_d C:/mat_garage_cable_alphamask.psd
+map_Bump -bm 1.000000 C:/mat_garage_cable_Normal_OpenGL.png
+
+newmtl mat_garage_canister
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/mat_garage_canister_Base_color.png
+map_Ns C:/mat_garage_canister_Roughness.png
+map_Bump -bm 1.000000 C:/mat_garage_canister_Normal_OpenGL.png
+
+newmtl mat_garage_car_jack
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/mat_garage_car_jack_Base_color.png
+map_Ns C:/mat_garage_car_jack_Roughness.png
+map_refl C:/mat_garage_car_jack_Metallic.png
+map_Bump -bm 1.000000 C:/mat_garage_car_jack_Normal_OpenGL.png
+
+newmtl mat_garage_concrete_slabs
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/mat_garage_concrete_slabs_Base_color.png
+map_Ns C:/mat_garage_concrete_slabs_Roughness.png
+map_Bump -bm 1.000000 C:/mat_garage_concrete_slabs_Normal_OpenGL.png
+
+newmtl mat_garage_floor
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd C:/mat_garage_floor_diffuseOriginal.bmp
+map_d C:/mat_garage_floor_diffuseOriginal.bmp
+map_Bump -bm 1.000000 C:/mat_garage_floor_normal.bmp
+
+newmtl mat_garage_lamp
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/mat_garage_lamp_base_color.png
+map_Ke C:/mat_garage_lamp_base_color.png
+
+newmtl mat_garage_metal
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/mat_garage_metal_BaseColor.png
+map_Ns C:/mat_garage_metal_Roughness.png
+map_Bump -bm 1.000000 C:/mat_garage_metal_Normal.png
+
+newmtl mat_garage_poster
+Ns 215.080872
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/mat_garage_poster_color.png
+
+newmtl mat_garage_tool_stand
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/mat_tool_stand_Base_color.png
+map_Ns C:/mat_tool_stand_Roughness.png
+map_refl C:/mat_tool_stand_Metallic.png
+map_Bump -bm 1.000000 C:/mat_tool_stand_Normal_OpenGL.png
+
+newmtl mat_garage_tool_table
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/mat_garage_tool_table_Base_color.png
+map_Ns C:/mat_garage_tool_table_Roughness.png
+map_refl C:/mat_garage_tool_table_Metallic.png
+map_Bump -bm 1.000000 C:/mat_garage_tool_table_Normal_OpenGL.png
+
+newmtl mat_garage_wheel
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/mat_garage_wheel_BaseColor.png
+map_Ns C:/mat_garage_wheel_Roughness.png
+map_refl C:/mat_garage_wheel_Metallic.png
+map_Bump -bm 1.000000 C:/mat_garage_wheel_Normal.png
+
+newmtl mat_garage_wood
+Ns 34.293556
+Ka 0.500000 0.500000 0.500000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd C:/mat_garage_wood_diffuse.jpg
+map_Bump -bm 1.000000 C:/mat_garage_wood_normal.jpg
+
+newmtl trim_garage_metal_grey
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/trim_garage_metal_blue_BaseColor.png
+map_Ns C:/trim_garage_metal_Roughness.png
+map_refl C:/trim_garage_metal_Metallic.png
+map_Bump -bm 1.000000 C:/trim_garage_metal_Normal.png
+
+newmtl trim_garage_metal_red
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/trim_garage_metal_BaseColor.png
+map_Ns C:/trim_garage_metal_Roughness.png
+map_refl C:/trim_garage_metal_Metallic.png
