@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f799c0c9a750bc04ea0d85d18141a105, type: 3}
+  m_Name: CarCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::CarCatalog
+  cars:
+  - displayName: Muscle Car
+    prefab: {fileID: 8207701124083597844, guid: 4b3f82012486e8747b03adb3d23f6b47, type: 3}
+    topSpeed: 180
+    acceleration: 6
+    handling: 0.6
+  - displayName: Sports Car
+    prefab: {fileID: 7066126591418625119, guid: e0f408f21dedd9e48ad9f2449cff217f, type: 3}
+    topSpeed: 180
+    acceleration: 6
+    handling: 0.6
