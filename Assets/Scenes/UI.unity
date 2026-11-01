@@ -431,6 +431,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3601321364876148712, guid: 4b09521856a1f3c48b213e47b0713e61, type: 3}
+      propertyPath: ecra_UP5
+      value: 
+      objectReference: {fileID: 2800000, guid: d1dbe36db52f7ee499e9c38dfbf1a8dc, type: 3}
+    - target: {fileID: 3601321364876148712, guid: 4b09521856a1f3c48b213e47b0713e61, type: 3}
+      propertyPath: ecra_UP6
+      value: 
+      objectReference: {fileID: 2800000, guid: a614cc88bf03a0e4c933b655abaf67f0, type: 3}
+    - target: {fileID: 3601321364876148712, guid: 4b09521856a1f3c48b213e47b0713e61, type: 3}
+      propertyPath: ecra_mudancas
+      value: 
+      objectReference: {fileID: 2800000, guid: 5e50ba360ed09bf42a01455bcae8d64f, type: 3}
     - target: {fileID: 8322238947764832443, guid: 4b09521856a1f3c48b213e47b0713e61, type: 3}
       propertyPath: m_Name
       value: UIDocument
