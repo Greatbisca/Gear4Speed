@@ -16,6 +16,7 @@ public class CarSpawner : MonoBehaviour
     public float groundOffset = 0f;
 
     public GameObject CurrentCar { get; private set; }
+    public CarStats CurrentStats { get; private set; }   // null = a usar defaults
 
     void Start()
     {
@@ -38,17 +39,31 @@ public class CarSpawner : MonoBehaviour
         CurrentCar = Instantiate(prefab, transform.position, rot, transform);
         CurrentCar.name = prefab.name;   // remove o "(Clone)"
 
-        // Escala e posição base primeiro, depois medir
         CurrentCar.transform.localScale = prefab.transform.localScale * carScale;
         CurrentCar.transform.localPosition = Vector3.zero;
 
-        // Assenta o ponto mais baixo do carro na posição do player/IA
         if (TryGetBounds(CurrentCar, out Bounds b))
         {
             float delta = transform.position.y + groundOffset - b.min.y;
             CurrentCar.transform.localPosition =
                 transform.InverseTransformVector(Vector3.up * delta);
         }
+
+        ApplyStats();
+    }
+
+    void ApplyStats()
+    {
+        CurrentStats = CurrentCar.GetComponent<CarStats>();
+
+        // Só o player tem Gearbox
+        var player = GetComponent<PlayerController>();
+        if (player == null || player.gearbox == null) return;
+
+        if (CurrentStats != null)
+            player.gearbox.Configure(CurrentStats.gears);
+        else
+            player.gearbox.ResetToDefault();   // carro sem stats: usa os defaults
     }
 
     static bool TryGetBounds(GameObject car, out Bounds bounds)
