@@ -3,9 +3,16 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField] private string gameScene = "Player";
+    [SerializeField] string carSelectScene = "CarSelect";
+    [SerializeField] GameObject quitButton;   // hidden in the web build
 
-    public void Play() => SceneManager.LoadScene(gameScene);
+    void Awake()
+    {
+        if (quitButton != null && Application.platform == RuntimePlatform.WebGLPlayer)
+            quitButton.SetActive(false);
+    }
+
+    public void Play() => SceneManager.LoadScene(carSelectScene);
 
     public void Quit()
     {

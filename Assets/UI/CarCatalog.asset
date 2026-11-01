@@ -18,8 +18,3 @@ MonoBehaviour:
     topSpeed: 180
     acceleration: 6
     handling: 0.6
-  - displayName: Sports Car
-    prefab: {fileID: 7066126591418625119, guid: e0f408f21dedd9e48ad9f2449cff217f, type: 3}
-    topSpeed: 180
-    acceleration: 6
-    handling: 0.6
