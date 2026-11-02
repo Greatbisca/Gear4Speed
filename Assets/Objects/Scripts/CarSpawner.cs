@@ -20,7 +20,9 @@ public class CarSpawner : MonoBehaviour
 
     void Start()
     {
-        GameObject prefab = chosenCarPrefab;
+        GameObject prefab = GameSelection.SelectedPrefab != null
+            ? GameSelection.SelectedPrefab
+            : chosenCarPrefab;
 
         if (prefab == null && randomPool != null && randomPool.Length > 0)
             prefab = randomPool[Random.Range(0, randomPool.Length)];
@@ -55,15 +57,61 @@ public class CarSpawner : MonoBehaviour
     void ApplyStats()
     {
         CurrentStats = CurrentCar.GetComponent<CarStats>();
+        if (GameSelection.SelectedCar != null)
+        {
+            if (CurrentStats == null)
+                CurrentStats = CurrentCar.AddComponent<CarStats>();
+
+            var entry = GameSelection.SelectedCar;
+            CurrentStats.maxSpeed = entry.topSpeed;
+            CurrentStats.acceleration = entry.acceleration;
+            CurrentStats.handling = entry.handling;
+            CurrentStats.powerUp = entry.powerUp;
+            CurrentStats.powerUpChargeRequired = entry.powerUpChargeRequired;
+            CurrentStats.engineSound = entry.engineSound;
+            CurrentStats.maxRpm = entry.maxRpm;
+            CurrentStats.rpmIncrease = entry.rpmIncrease;
+            CurrentStats.rpmDecrease = entry.rpmDecrease;
+            CurrentStats.gears = CloneGears(entry.gears, entry.topSpeed / 3.6f);
+
+            foreach (var engine in CurrentCar.GetComponentsInChildren<EngineSound>(true))
+                engine.Configure(CurrentStats);
+        }
 
         // Só o player tem Gearbox
         var player = GetComponent<PlayerController>();
         if (player == null || player.gearbox == null) return;
 
         if (CurrentStats != null)
+        {
             player.gearbox.Configure(CurrentStats.gears);
+            player.gearbox.limiterRpm = CurrentStats.maxRpm;
+            player.gearbox.fallRate = CurrentStats.rpmDecrease;
+        }
         else
             player.gearbox.ResetToDefault();   // carro sem stats: usa os defaults
+    }
+
+    static Gearbox.GearSetting[] CloneGears(Gearbox.GearSetting[] source, float targetTopSpeed)
+    {
+        if (source == null || source.Length == 0) return null;
+
+        var copy = new Gearbox.GearSetting[source.Length];
+        float currentTopSpeed = source[source.Length - 1].maxSpeed;
+        float speedScale = currentTopSpeed > 0f ? targetTopSpeed / currentTopSpeed : 1f;
+        for (int i = 0; i < source.Length; i++)
+        {
+            copy[i] = new Gearbox.GearSetting
+            {
+                name = source[i].name,
+                maxSpeed = source[i].maxSpeed * speedScale,
+                acceleration = source[i].acceleration,
+                gearRatio = source[i].gearRatio,
+                rpmIncrease = source[i].rpmIncrease,
+                rpmDecrease = source[i].rpmDecrease
+            };
+        }
+        return copy;
     }
 
     static bool TryGetBounds(GameObject car, out Bounds bounds)

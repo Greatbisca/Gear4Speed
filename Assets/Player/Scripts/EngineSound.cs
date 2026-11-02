@@ -56,12 +56,32 @@ public class EngineSound : MonoBehaviour
         var player = GetComponentInParent<PlayerController>();
         gearbox = player != null ? player.gearbox : GetComponentInParent<Gearbox>();
         usingGearbox = gearbox != null;
+
+        var stats = GetComponentInParent<CarStats>();
+        if (stats != null && stats.engineSound != null)
+        {
+            engineLoop = stats.engineSound;
+            maxRpm = stats.maxRpm;
+        }
     }
 
     void Start()
     {
         currentRpm = idleRpm;
         if (engineLoop != null) source.Play();
+    }
+
+    public void Configure(CarStats stats)
+    {
+        if (stats == null) return;
+        if (stats.engineSound != null)
+        {
+            engineLoop = stats.engineSound;
+            source.clip = engineLoop;
+            if (!source.isPlaying && engineLoop != null)
+                source.Play();
+        }
+        maxRpm = stats.maxRpm;
     }
 
     void Update()
