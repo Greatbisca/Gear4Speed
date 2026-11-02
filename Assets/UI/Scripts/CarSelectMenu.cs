@@ -76,9 +76,9 @@ public class CarSelectMenu : MonoBehaviour
         }
 
         nameText.text = e.displayName.ToUpper();
-        SetBar(speedPips,    e.topSpeed / maxTopSpeed);
-        SetBar(accPips,      e.acceleration / maxAcceleration);
-        SetBar(handlingPips, e.handling);
+        SetBar(speedPips,    e.TopSpeed / maxTopSpeed);
+        SetBar(accPips,      e.Acceleration / maxAcceleration);
+        SetBar(handlingPips, e.Handling);
     }
 
     // ---------- stat bars ----------
@@ -115,6 +115,8 @@ public class CarSelectMenu : MonoBehaviour
     public void Race()
     {
         GameSelection.CarIndex = index;
+        GameSelection.SelectedPrefab = catalog.cars[index].prefab;
+        GameSelection.SelectedCar = catalog.cars[index];
         SceneManager.LoadScene(raceScene);
     }
 

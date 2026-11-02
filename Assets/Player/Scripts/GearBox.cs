@@ -15,6 +15,12 @@ public class Gearbox : MonoBehaviour
         public float maxSpeed = 12f;
         [Tooltip("Acceleration in this gear, in m/s2.")]
         public float acceleration = 4f;
+        [Tooltip("Transmission ratio for this gear. Reserved for the detailed RPM model.")]
+        public float gearRatio = 1f;
+        [Tooltip("RPM increase while this gear is engaged. Reserved for the detailed RPM model.")]
+        public float rpmIncrease = 400f;
+        [Tooltip("RPM decrease while this gear is engaged. Reserved for the detailed RPM model.")]
+        public float rpmDecrease = 400f;
     }
 
     public GearSetting[] gears =
@@ -118,7 +124,10 @@ public class Gearbox : MonoBehaviour
             {
                 name = src[i].name,
                 maxSpeed = src[i].maxSpeed,
-                acceleration = src[i].acceleration
+                acceleration = src[i].acceleration,
+                gearRatio = src[i].gearRatio,
+                rpmIncrease = src[i].rpmIncrease,
+                rpmDecrease = src[i].rpmDecrease
             };
         return copy;
     }

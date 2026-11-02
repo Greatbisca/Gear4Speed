@@ -469,6 +469,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6844804343894976037}
+  - component: {fileID: 900000000000000001}
   m_Layer: 0
   m_Name: ShowCar1
   m_TagString: Untagged
@@ -496,3 +497,49 @@ Transform:
   - {fileID: 5152694073405347214}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &900000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8207701124083597844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d7e0ec7b45ebe459ed8235d6fa2e2c, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::CarStats
+  handling: 0.6
+  acceleration: 6
+  maxSpeed: 180
+  powerUp: Nitro
+  powerUpChargeRequired: 100
+  engineSound: {fileID: 0}
+  maxRpm: 4000
+  rpmIncrease: 400
+  rpmDecrease: 400
+  gears:
+  - name: 1st
+    maxSpeed: 12
+    acceleration: 4
+    gearRatio: 3.5
+    rpmIncrease: 400
+    rpmDecrease: 400
+  - name: 2nd
+    maxSpeed: 18
+    acceleration: 3.5
+    gearRatio: 2.1
+    rpmIncrease: 400
+    rpmDecrease: 400
+  - name: 3rd
+    maxSpeed: 27
+    acceleration: 3
+    gearRatio: 1.4
+    rpmIncrease: 400
+    rpmDecrease: 400
+  - name: 4th
+    maxSpeed: 40.5
+    acceleration: 2.5
+    gearRatio: 1
+    rpmIncrease: 400
+    rpmDecrease: 400
