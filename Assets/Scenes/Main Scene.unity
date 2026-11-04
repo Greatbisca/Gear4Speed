@@ -1297,7 +1297,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RaceSplineFollower
   path: {fileID: 298690915}
   driverType: 1
-  lateralOffset: 1.5
+  lateralOffset: -3
   heightOffset: 0.5
   rotationOffset: {x: -90, y: 0, z: 0}
   aiCruiseSpeedKmh: 160
@@ -4755,7 +4755,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RaceSplineFollower
   path: {fileID: 298690915}
   driverType: 0
-  lateralOffset: 1.5
+  lateralOffset: 3
   heightOffset: 0.5
   rotationOffset: {x: -90, y: 0, z: 0}
   aiCruiseSpeedKmh: 160
