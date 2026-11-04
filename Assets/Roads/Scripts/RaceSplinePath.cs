@@ -13,6 +13,8 @@ public class RaceSplinePath : MonoBehaviour
     {
         CollectSegmentsIfNeeded();
         RecalculateLength();
+        if (segments.Length == 0)
+            Debug.LogError($"{name}: no RaceSplineSegment children were found.", this);
     }
 
     void OnValidate()
@@ -23,8 +25,17 @@ public class RaceSplinePath : MonoBehaviour
 
     public void CollectSegmentsIfNeeded()
     {
-        if (segments != null && segments.Length > 0) return;
-        segments = GetComponentsInChildren<RaceSplineSegment>(true);
+        RaceSplineSegment[] found =
+            GetComponentsInChildren<RaceSplineSegment>(true);
+
+        var unique = new List<RaceSplineSegment>(found.Length);
+        foreach (RaceSplineSegment segment in found)
+        {
+            if (segment != null && !unique.Contains(segment))
+                unique.Add(segment);
+        }
+
+        segments = unique.ToArray();
     }
 
     public void RecalculateLength()
