@@ -11,8 +11,14 @@ public class PlayerController : MonoBehaviour, ISpeedSource
     public float lateralOffset = 1.5f;
 
     public float clutchDrag = 0.8f;
-    public float greenBonus = 1f;          // m/s added on a green UPSHIFT
-    public float redPenalty = 0.85f;       // speed multiplier on a red shift
+    [Min(1f)]
+    public float accelerationMultiplier = 1.3f;
+    [Min(0f)]
+    public float engineBogStrength = 2f;
+    [Range(0.05f, 0.5f)]
+    public float engineBogSpeedFraction = 0.2f;
+    public float greenBonus = 1.5f;        // m/s added on a green UPSHIFT
+    public float redPenalty = 0.9f;        // speed multiplier on a red shift
     public float engineBrake = 5f;
 
 
@@ -87,7 +93,21 @@ public class PlayerController : MonoBehaviour, ISpeedSource
         float gearMax = gearbox.MaxSpeed;
 
         float cap = Mathf.Min(gearMax, cornerLimit);
-        float brakeRate = cornerLimit < gearMax ? cornerBrake : engineBrake;
+        float splineCornerBrake = splineFollower != null
+            ? splineFollower.CurrentCornerBrakeDeceleration
+            : 0f;
+        if (splineFollower != null &&
+            splineFollower.CurrentSegment != null &&
+            splineFollower.CurrentSegment.IsCorner &&
+            CurrentSpeed > cornerLimit)
+        {
+            float targetSpeed = Mathf.Max(0.1f, cornerLimit);
+            float excessFactor = Mathf.Max(1f, CurrentSpeed / targetSpeed);
+            splineCornerBrake *= excessFactor;
+        }
+        float brakeRate = cornerLimit < gearMax
+            ? Mathf.Max(cornerBrake, splineCornerBrake)
+            : engineBrake;
 
         if (gearbox.InClutch)
         {
@@ -98,10 +118,27 @@ public class PlayerController : MonoBehaviour, ISpeedSource
         }
         else
         {
-            if (CurrentSpeed > cap)     // above the corner limit or the gear's top speed
+            if (gearbox.ShouldStall(CurrentSpeed))
+            {
+                gearbox.Stall();
+                CurrentSpeed = 0f;
+                return;
+            }
+
+            bool engineBogging = gearbox.CurrentGear > 1 &&
+                CurrentSpeed < gearbox.MaxSpeed * engineBogSpeedFraction;
+            if (engineBogging)
+            {
+                CurrentSpeed = Mathf.Max(
+                    0f,
+                    CurrentSpeed - engineBogStrength * dt);
+            }
+            else if (CurrentSpeed > cap)     // above the corner limit or the gear's top speed
                 CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, cap, brakeRate * dt);
             else
-                CurrentSpeed = Mathf.Min(CurrentSpeed + gearbox.Acceleration * dt, cap);
+                CurrentSpeed = Mathf.Min(
+                    CurrentSpeed + gearbox.Acceleration * accelerationMultiplier * dt,
+                    cap);
 
             gearbox.UpdateRpm(CurrentSpeed);
         }

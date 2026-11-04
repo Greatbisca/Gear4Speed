@@ -33,6 +33,7 @@ public static class ConfigureRoadSplineComponents
 
                 segment.type = GetSegmentType(prefab.name);
                 segment.brakingBuffer = GetBrakingBuffer(segment.type);
+                segment.speedMultiplier = GetSpeedMultiplier(segment.type);
 
                 EditorUtility.SetDirty(spline.gameObject);
                 PrefabUtility.SaveAsPrefabAsset(prefab, path);
@@ -74,6 +75,21 @@ public static class ConfigureRoadSplineComponents
                 return 20f;
             default:
                 return 0f;
+        }
+    }
+
+    static float GetSpeedMultiplier(RaceSplineSegment.SegmentType type)
+    {
+        switch (type)
+        {
+            case RaceSplineSegment.SegmentType.Corner:
+                return 0.8f;
+            case RaceSplineSegment.SegmentType.Chicane:
+                return 0.95f;
+            case RaceSplineSegment.SegmentType.UTurn:
+                return 0.55f;
+            default:
+                return 1f;
         }
     }
 }

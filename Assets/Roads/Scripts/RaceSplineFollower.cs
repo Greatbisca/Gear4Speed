@@ -27,7 +27,10 @@ public class RaceSplineFollower : MonoBehaviour
     public float Distance { get; private set; }
     public float CurrentSpeed { get; private set; }
     public RaceSplineSegment CurrentSegment { get; private set; }
+    public float TargetSpeedMs { get; private set; } = float.PositiveInfinity;
     public float CurrentSpeedLimitMs { get; private set; } = float.PositiveInfinity;
+    public float CurrentCornerBrakeDeceleration { get; private set; }
+    public bool IsInitialized { get; private set; }
 
     CarStats stats;
     float aiSpeed;
@@ -53,12 +56,22 @@ public class RaceSplineFollower : MonoBehaviour
                 $"{name}: RaceSplineFollower is set to Player but no PlayerController was found on this object or its parents.",
                 this);
         }
+
+        InitializeFromCurrentPosition();
+    }
+
+    public void InitializeFromCurrentPosition()
+    {
+        if (path == null || movementTarget == null) return;
+
+        Distance = path.GetClosestDistance(movementTarget.position);
+        IsInitialized = true;
         Place();
     }
 
     void LateUpdate()
     {
-        if (path == null || path.TotalLength <= 0f) return;
+        if (!IsInitialized || path == null || path.TotalLength <= 0f) return;
 
         CurrentSpeed = driverType == DriverType.Player
             ? player != null ? Mathf.Max(0f, player.CurrentSpeed) : 0f
@@ -82,7 +95,10 @@ public class RaceSplineFollower : MonoBehaviour
         if (path.Evaluate(Distance, 0f, out _, out _, out RaceSplineSegment segment) &&
             segment != null)
         {
-            target = Mathf.Min(target, segment.GetSpeedLimitMs(maxSpeedKmh, handling));
+            float progress = path.GetSegmentProgress(Distance, segment);
+            target = Mathf.Min(
+                target,
+                segment.GetSpeedLimitMs(maxSpeedKmh, handling, progress));
         }
 
         float rate = aiSpeed > target ? aiBrake : aiAcceleration;
@@ -124,6 +140,15 @@ public class RaceSplineFollower : MonoBehaviour
                 ? player.gearbox.MaxSpeed * 3.6f
                 : aiCruiseSpeedKmh;
         float handling = stats != null ? stats.handling : 0.5f;
-        CurrentSpeedLimitMs = segment.GetSpeedLimitMs(maxSpeedKmh, handling);
+        float progress = path.GetSegmentProgress(Distance, segment);
+        TargetSpeedMs = segment.GetTargetSpeedMs(
+            maxSpeedKmh,
+            handling,
+            progress);
+        CurrentSpeedLimitMs = TargetSpeedMs;
+        CurrentCornerBrakeDeceleration = segment.IsCorner
+            ? maxSpeedKmh / 3.6f *
+              (1.5f + Mathf.Max(0f, 1f - handling) * 2f)
+            : 0f;
     }
 }
