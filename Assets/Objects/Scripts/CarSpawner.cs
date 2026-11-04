@@ -79,7 +79,9 @@ public class CarSpawner : MonoBehaviour
         }
 
         // Só o player tem Gearbox
-        var player = GetComponent<PlayerController>();
+        var player = GetComponent<PlayerController>()
+            ?? GetComponentInParent<PlayerController>()
+            ?? GetComponentInChildren<PlayerController>();
         if (player == null || player.gearbox == null) return;
 
         if (CurrentStats != null)
