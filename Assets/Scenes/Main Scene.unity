@@ -4582,7 +4582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dac008c21754cf4695784eee6559532, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GearboxSounds
-  gearbox: {fileID: 0}
+  gearbox: {fileID: 1983684931}
   clutchPress: {fileID: 0}
   gearUp: {fileID: 0}
   gearDown: {fileID: 0}
