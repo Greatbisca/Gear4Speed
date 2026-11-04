@@ -1,0 +1,371 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &275608586804103172
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3525638847029260620}
+  - component: {fileID: 1257331022280168549}
+  - component: {fileID: 4938049739462855217}
+  m_Layer: 0
+  m_Name: Spline
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3525638847029260620
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 275608586804103172}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 42, y: 0, z: 0}
+  m_LocalScale: {x: 0.6666667, y: 0.6666667, z: 0.6666667}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4526563900666434621}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1257331022280168549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 275608586804103172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dab5c7d4c32e743048dfca98e2d5914f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Splines::UnityEngine.Splines.SplineContainer
+  m_Spline:
+    m_EditModeType: 1
+    m_Knots: []
+    m_MetaData: []
+    m_Closed: 0
+    m_IntData:
+      m_Data: []
+    m_FloatData:
+      m_Data: []
+    m_Float4Data:
+      m_Data: []
+    m_ObjectData:
+      m_Data: []
+  m_Splines:
+  - m_EditModeType: 1
+    m_Knots:
+    - Position:
+        x: 0
+        y: 0
+        z: 0
+      TangentIn:
+        x: -0
+        y: -0
+        z: -1.0475372
+      TangentOut:
+        x: 0
+        y: 0
+        z: 1.0475372
+      Rotation:
+        value:
+          x: 0
+          y: -0.70710677
+          z: -0
+          w: 0.70710677
+    - Position:
+        x: -10.475372
+        y: 0
+        z: 0
+      TangentIn:
+        x: 0
+        y: 0
+        z: -4.787809
+      TangentOut:
+        x: 0
+        y: 0
+        z: 2.3630307
+      Rotation:
+        value:
+          x: 0
+          y: -0.70710665
+          z: -0
+          w: 0.7071069
+    - Position:
+        x: -26.283966
+        y: 0
+        z: -7.2253647
+      TangentIn:
+        x: 0
+        y: 0
+        z: -11.259336
+      TangentOut:
+        x: 0
+        y: 0
+        z: 9.119515
+      Rotation:
+        value:
+          x: 0
+          y: 0.93993217
+          z: 0
+          w: -0.34136134
+    - Position:
+        x: -45
+        y: 0
+        z: -17.5
+      TangentIn:
+        x: 0.7962265
+        y: 0
+        z: -9.728668
+      TangentOut:
+        x: 0
+        y: 0
+        z: 8.520996
+      Rotation:
+        value:
+          x: 0
+          y: -0.6993711
+          z: -0
+          w: 0.7147588
+    - Position:
+        x: -63.15
+        y: 0
+        z: 0
+      TangentIn:
+        x: 0
+        y: 0
+        z: -9.27372
+      TangentOut:
+        x: 0.0000000402797
+        y: 1.4551915e-11
+        z: 2.8709695
+      Rotation:
+        value:
+          x: 0
+          y: 0
+          z: 0
+          w: 1
+    - Position:
+        x: -63.15
+        y: 0
+        z: 9
+      TangentIn:
+        x: 0
+        y: 0
+        z: -3.489769
+      TangentOut:
+        x: 0
+        y: 0
+        z: 10.098576
+      Rotation:
+        value:
+          x: 0
+          y: 0
+          z: 0
+          w: 1
+    m_MetaData:
+    - Mode: 0
+      Tension: 0.5
+    - Mode: 3
+      Tension: 0.5
+    - Mode: 3
+      Tension: 0.5
+    - Mode: 4
+      Tension: 0.5
+    - Mode: 4
+      Tension: 0.5
+    - Mode: 3
+      Tension: 0.5
+    m_Closed: 0
+    m_IntData:
+      m_Data: []
+    m_FloatData:
+      m_Data: []
+    m_Float4Data:
+      m_Data: []
+    m_ObjectData:
+      m_Data: []
+  m_Knots:
+    m_KnotsLink: []
+--- !u!114 &4938049739462855217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 275608586804103172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73ad9d97bd33fc8438c434c70cb656f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RaceSplineSegment
+  type: 2
+  brakingBuffer: 14
+--- !u!1001 &678881763570075515
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2878194215984982057, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 079d5239d2812b341b3058609543c149, type: 2}
+    - target: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -286.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 50.700005
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4391460521966160380, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      propertyPath: m_Name
+      value: Lite medium shicane Turn Left
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3525638847029260620}
+    - targetCorrespondingSourceObject: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2507605571142406360}
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+--- !u!4 &4526563900666434621 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4015604203870327622, guid: 1fabac9dccde47e46980b6bea11dd232, type: 3}
+  m_PrefabInstance: {fileID: 678881763570075515}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3176543732736821576
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4526563900666434621}
+    m_Modifications:
+    - target: {fileID: 401459072786629418, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: m_Name
+      value: Lite medium shicane Turn Left curb
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070049435448138128, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070049435448138128, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070049435448138128, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070049435448138128, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070049435448138128, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070049435448138128, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070049435448138128, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070049435448138128, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070049435448138128, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070049435448138128, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070049435448138128, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070049435448138128, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070049435448138128, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2203026123865039615, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: bb73c4e59573260498cb1013ad93c999, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+--- !u!4 &2507605571142406360 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1070049435448138128, guid: f7d9f97a9e337a540adce7a6f57c7042, type: 3}
+  m_PrefabInstance: {fileID: 3176543732736821576}
+  m_PrefabAsset: {fileID: 0}
