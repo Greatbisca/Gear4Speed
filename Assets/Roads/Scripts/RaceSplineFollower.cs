@@ -31,12 +31,18 @@ public class RaceSplineFollower : MonoBehaviour
 
     CarStats stats;
     float aiSpeed;
+    Transform movementTarget;
 
     void Awake()
     {
         if (path == null) path = FindFirstObjectByType<RaceSplinePath>();
         if (player == null) player = GetComponentInParent<PlayerController>();
-        stats = GetComponentInChildren<CarStats>();
+        stats = GetComponentInParent<CarStats>();
+        if (stats == null)
+            stats = GetComponentInChildren<CarStats>();
+        movementTarget = driverType == DriverType.Player && player != null
+            ? player.transform
+            : transform;
     }
 
     void Start()
@@ -96,11 +102,11 @@ public class RaceSplineFollower : MonoBehaviour
 
         CurrentSegment = segment;
         UpdateSpeedLimit(segment);
-        transform.position = position + Vector3.up * heightOffset;
+        movementTarget.position = position + Vector3.up * heightOffset;
         if (forward.sqrMagnitude > 0.001f)
         {
             Quaternion pathRotation = Quaternion.LookRotation(forward, Vector3.up);
-            transform.rotation = pathRotation * Quaternion.Euler(rotationOffset);
+            movementTarget.rotation = pathRotation * Quaternion.Euler(rotationOffset);
         }
     }
 

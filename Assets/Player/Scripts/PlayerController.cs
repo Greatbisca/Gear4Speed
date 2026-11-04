@@ -23,8 +23,14 @@ public class PlayerController : MonoBehaviour, ISpeedSource
 
     void Awake()
     {
+        if (gearbox == null)
+            gearbox = GetComponent<Gearbox>()
+                ?? GetComponentInChildren<Gearbox>()
+                ?? GetComponentInParent<Gearbox>();
         if (splineFollower == null)
-            splineFollower = GetComponent<RaceSplineFollower>();
+            splineFollower = GetComponent<RaceSplineFollower>()
+                ?? GetComponentInChildren<RaceSplineFollower>()
+                ?? GetComponentInParent<RaceSplineFollower>();
         if (map == null) map = FindFirstObjectByType<Map_Gen>();
     }
 
@@ -38,8 +44,17 @@ public class PlayerController : MonoBehaviour, ISpeedSource
         Place();
     }
 
-    void OnEnable()  => gearbox.Shifted += OnShifted;
-    void OnDisable() => gearbox.Shifted -= OnShifted;
+    void OnEnable()
+    {
+        if (gearbox != null)
+            gearbox.Shifted += OnShifted;
+    }
+
+    void OnDisable()
+    {
+        if (gearbox != null)
+            gearbox.Shifted -= OnShifted;
+    }
 
     void OnShifted(ShiftZone zone)
     {
@@ -56,6 +71,13 @@ public class PlayerController : MonoBehaviour, ISpeedSource
 
     void UpdateSpeed(float dt)
     {
+        if (gearbox == null)
+        {
+            Debug.LogError($"{name}: PlayerController requires a Gearbox reference.", this);
+            enabled = false;
+            return;
+        }
+
         float cornerLimit = splineFollower != null
             ? splineFollower.CurrentSpeedLimitMs
             : corners != null
