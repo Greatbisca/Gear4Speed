@@ -10,13 +10,15 @@ public class comandos_multiplayer : MonoBehaviour
 	[SerializeField] private Image p1_manipulo;
 	[SerializeField] private Image p1_upgrade5;
 	[SerializeField] private Image p1_upgrade6;
-
+	[SerializeField] private Image p1_upgradeBar;
+	
 	[SerializeField] private Image p2_ecra;
 	[SerializeField] private Image p2_acelarador;
 	[SerializeField] private Image p2_manipulo;
 	[SerializeField] private Image p2_upgrade5;
 	[SerializeField] private Image p2_upgrade6;
-
+	[SerializeField] private Image p2_upgradeBar;
+	
 	//-------------------------------------------------------//
 	[SerializeField] private Texture2D acelarador_normal;
 	[SerializeField] private Texture2D acelarador_pressed;
@@ -37,6 +39,10 @@ public class comandos_multiplayer : MonoBehaviour
 	Vector2Int limite_horizontal2 = new Vector2Int(-1, 1);
 	bool up6 = false;
 	bool up6_2 = false;
+	
+	//Valor da barra de upgrade || cheio = 240
+	int upgrade_value_p1 = 0;
+	int upgrade_value_p2 = 0;
 
 	// Posições das mudanças
 	Vector2[] posicoes = {
@@ -72,13 +78,15 @@ public class comandos_multiplayer : MonoBehaviour
         p1_upgrade5 = player1.Q<Image>("upgrade_5");
         p1_upgrade6 = player1.Q<Image>("upgrade_6");
         p1_ecra = player1.Q<Image>("gearscreen");
+		p1_upgradeBar = player1.Q<Image>("up_bar");
 
 		p2_acelarador = player2.Q<Image>("acelarador");
         p2_manipulo = player2.Q<Image>("manipulo");
         p2_upgrade5 = player2.Q<Image>("upgrade_5");
         p2_upgrade6 = player2.Q<Image>("upgrade_6");
         p2_ecra = player2.Q<Image>("gearscreen");
-
+		p2_upgradeBar = player2.Q<Image>("up_bar");
+		
 		//posição inicial do manipuço
 		p1_manipulo.style.left = posicoes[0].x;
 		p1_manipulo.style.bottom = posicoes[0].y;
@@ -92,8 +100,22 @@ public class comandos_multiplayer : MonoBehaviour
     }
 
     void Update() {
-		if (Keyboard.current == null)
-			return;
+	
+		//----Barra de Upgrade----//
+		//Código de teste apenas para encher a barra
+		if (upgrade_value_p1 < 240)
+		{
+			upgrade_value_p1++;
+		}
+		
+		if (upgrade_value_p2 < 240)
+		{
+			upgrade_value_p2++;
+		}
+		
+		//Define o valor da barra de upgrade
+		p1_upgradeBar.style.width = upgrade_value_p1;
+		p2_upgradeBar.style.width = upgrade_value_p2;
 	
 		//player 1
 		AtualizarJogador(p1_ecra, p1_acelarador, p1_manipulo, p1_upgrade5, p1_upgrade6,
@@ -107,6 +129,7 @@ public class comandos_multiplayer : MonoBehaviour
 			Keyboard.current.leftArrowKey, Keyboard.current.rightArrowKey,
 			Keyboard.current.upArrowKey, Keyboard.current.downArrowKey,
 			Keyboard.current.rightCtrlKey);
+
     }
 
 	void AtualizarJogador(Image ecra, Image acelerador, Image manipulo, Image upgrade5, Image upgrade6,
@@ -216,5 +239,7 @@ public class comandos_multiplayer : MonoBehaviour
 			acelerador.style.backgroundImage = new StyleBackground(acelarador_normal);
 			acelerador.style.bottom = -27;
 		}
+		
+		
 	}
 }
