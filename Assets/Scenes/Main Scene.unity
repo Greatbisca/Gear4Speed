@@ -795,6 +795,7 @@ MonoBehaviour:
   type: 3
   brakingBuffer: 25
   speedMultiplier: 0.6
+  gearDropOverride: -1
 --- !u!4 &283532467 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6829646629356318952, guid: c61d6b4b40a4ba44ab40ac59ccb82401, type: 3}
@@ -1412,6 +1413,20 @@ MonoBehaviour:
   rotationOffset: {x: -90, y: 0, z: 0}
   lookDistance: 1
   rotationSmoothing: 20
+  cornerGearDrop: 1
+  chicaneGearDrop: 1
+  uTurnGearDrop: 2
+  handlingGearSwing: 2
+  maxGearDrop: 2
+  defaultHandling: 0.5
+  shiftTimeBudget: 1.5
+  minBrakeDecel: 2.5
+  maxBrakeDecel: 8
+  planningMargin: 0.9
+  maxLookAhead: 300
+  minCornerSpeedMs: 3
+  fallbackMaxSpeedKmh: 120
+  fallbackBrakeDecel: 5
 --- !u!1001 &350077412
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3471,6 +3486,7 @@ MonoBehaviour:
   type: 3
   brakingBuffer: 25
   speedMultiplier: 0.6
+  gearDropOverride: -1
 --- !u!1001 &1301209934
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4863,7 +4879,7 @@ MonoBehaviour:
   clutchDrag: 0.8
   accelerationMultiplier: 1.3
   engineBogStrength: 2
-  engineBogSpeedFraction: 0.2
+  engineBogSpeedFraction: 0.3
   greenBonus: 1
   redPenalty: 0.85
   engineBrake: 5
@@ -5060,6 +5076,20 @@ MonoBehaviour:
   rotationOffset: {x: -90, y: 0, z: 0}
   lookDistance: 1
   rotationSmoothing: 20
+  cornerGearDrop: 1
+  chicaneGearDrop: 1
+  uTurnGearDrop: 2
+  handlingGearSwing: 2
+  maxGearDrop: 2
+  defaultHandling: 0.5
+  shiftTimeBudget: 1.5
+  minBrakeDecel: 2.5
+  maxBrakeDecel: 8
+  planningMargin: 0.9
+  maxLookAhead: 300
+  minCornerSpeedMs: 3
+  fallbackMaxSpeedKmh: 120
+  fallbackBrakeDecel: 5
 --- !u!4 &1983684937 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6894893722733645313, guid: 2b2681f3fb58078499145f06783dfb40, type: 3}

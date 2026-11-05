@@ -22,6 +22,10 @@ public class RaceSplineSegment : MonoBehaviour
     [Tooltip("Track-specific speed multiplier applied after car max speed and handling.")]
     public float speedMultiplier = 1f;
 
+    [Min(-1)]
+    [Tooltip("Quantas mudanças o jogador tem de reduzir nesta curva. -1 = usa o valor do tipo + handling.")]
+    public int gearDropOverride = -1;
+
     public SplineContainer Spline { get; private set; }
 
     public bool IsCorner => type != SegmentType.Straight;
