@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8321977890201460808}
   - component: {fileID: 3601321364876148712}
   m_Layer: 5
-  m_Name: UIDocument
+  m_Name: Singleplayer_UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73,3 +73,6 @@ MonoBehaviour:
   manipulo_normal: {fileID: 2800000, guid: c842f00e778889f4d8d97771d990c416, type: 3}
   manipulo_up: {fileID: 2800000, guid: 0dad8cb09ddf61643977f0304e062897, type: 3}
   manipulo_down: {fileID: 2800000, guid: f74e5747e29082d47ac3bf685a09d1c5, type: 3}
+  ecra_mudancas: {fileID: 2800000, guid: 5e50ba360ed09bf42a01455bcae8d64f, type: 3}
+  ecra_UP5: {fileID: 2800000, guid: d1dbe36db52f7ee499e9c38dfbf1a8dc, type: 3}
+  ecra_UP6: {fileID: 2800000, guid: a614cc88bf03a0e4c933b655abaf67f0, type: 3}
