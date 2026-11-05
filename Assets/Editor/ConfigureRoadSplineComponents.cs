@@ -1,59 +1,110 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Splines;
 
 public static class ConfigureRoadSplineComponents
 {
-    const string PrefabFolder = "Assets/Roads/Prefabs";
+    const string RoadsFolder = "Assets/Roads";
 
     [MenuItem("Gear4Speed/Configure Road Spline Components")]
     public static void Configure()
     {
-        string[] guids = AssetDatabase.FindAssets("t:Prefab", new[] { PrefabFolder });
-        int configured = 0;
+        string[] prefabGuids = AssetDatabase.FindAssets(
+            "t:Prefab",
+            new[] { RoadsFolder });
+        int configuredPrefabs = 0;
+        int configuredSegments = 0;
 
-        foreach (string guid in guids)
+        try
         {
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            GameObject prefab = PrefabUtility.LoadPrefabContents(path);
+            AssetDatabase.StartAssetEditing();
 
-            try
+            foreach (string guid in prefabGuids)
             {
-                SplineContainer spline = prefab.GetComponentInChildren<SplineContainer>(true);
-                if (spline == null)
-                {
-                    Debug.LogWarning($"No SplineContainer found in {path}.");
+                string assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                if (IsCurbPrefab(assetPath))
                     continue;
+
+                GameObject prefab = PrefabUtility.LoadPrefabContents(assetPath);
+                try
+                {
+                    int addedToPrefab = ConfigurePrefab(
+                        prefab,
+                        assetPath);
+                    if (addedToPrefab == 0)
+                        continue;
+
+                    PrefabUtility.SaveAsPrefabAsset(prefab, assetPath);
+                    configuredPrefabs++;
+                    configuredSegments += addedToPrefab;
                 }
-
-                RaceSplineSegment segment =
-                    spline.GetComponent<RaceSplineSegment>();
-                if (segment == null)
-                    segment = spline.gameObject.AddComponent<RaceSplineSegment>();
-
-                segment.type = GetSegmentType(prefab.name);
-                segment.brakingBuffer = GetBrakingBuffer(segment.type);
-                segment.speedMultiplier = GetSpeedMultiplier(segment.type);
-
-                EditorUtility.SetDirty(spline.gameObject);
-                PrefabUtility.SaveAsPrefabAsset(prefab, path);
-                configured++;
-            }
-            finally
-            {
-                PrefabUtility.UnloadPrefabContents(prefab);
+                finally
+                {
+                    PrefabUtility.UnloadPrefabContents(prefab);
+                }
             }
         }
+        finally
+        {
+            AssetDatabase.StopAssetEditing();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
 
-        AssetDatabase.SaveAssets();
-        Debug.Log($"Configured RaceSplineSegment on {configured} road prefab(s).");
+        Debug.Log(
+            $"Configured {configuredSegments} RaceSplineSegment component(s) " +
+            $"in {configuredPrefabs} road prefab(s).");
     }
 
-    static RaceSplineSegment.SegmentType GetSegmentType(string prefabName)
+    static int ConfigurePrefab(GameObject prefab, string assetPath)
     {
-        string name = prefabName.ToLowerInvariant();
+        RaceSplineSegment.SegmentType type =
+            GetSegmentType(assetPath, prefab.name);
+        SplineContainer[] splines =
+            prefab.GetComponentsInChildren<SplineContainer>(true);
+        int configured = 0;
 
-        if (name.Contains("u-turn"))
+        foreach (SplineContainer spline in splines)
+        {
+            if (spline == null || spline.Spline == null ||
+                spline.Spline.GetLength() <= 0f)
+            {
+                continue;
+            }
+
+            RaceSplineSegment segment =
+                spline.GetComponent<RaceSplineSegment>();
+            if (segment == null)
+                segment = spline.gameObject.AddComponent<RaceSplineSegment>();
+
+            segment.type = type;
+            segment.brakingBuffer = GetBrakingBuffer(type);
+            segment.speedMultiplier = GetSpeedMultiplier(type);
+            EditorUtility.SetDirty(segment);
+            configured++;
+        }
+
+        return configured;
+    }
+
+    static bool IsCurbPrefab(string assetPath)
+    {
+        string fileName = System.IO.Path.GetFileNameWithoutExtension(
+            assetPath);
+        return fileName.IndexOf("curb", StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    static RaceSplineSegment.SegmentType GetSegmentType(
+        string assetPath,
+        string prefabName)
+    {
+        string name = (assetPath + "/" + prefabName).ToLowerInvariant()
+            .Replace("-", "")
+            .Replace("_", "")
+            .Replace(" ", "");
+
+        if (name.Contains("uturn") || name.Contains("u-turn"))
             return RaceSplineSegment.SegmentType.UTurn;
         if (name.Contains("chicane") || name.Contains("shicane"))
             return RaceSplineSegment.SegmentType.Chicane;

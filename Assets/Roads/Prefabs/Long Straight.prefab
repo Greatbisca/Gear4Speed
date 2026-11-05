@@ -127,6 +127,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RaceSplineSegment
   type: 0
   brakingBuffer: 0
+  speedMultiplier: 1
 --- !u!1001 &1123992426604174971
 PrefabInstance:
   m_ObjectHideFlags: 0

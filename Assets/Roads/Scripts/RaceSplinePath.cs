@@ -4,18 +4,16 @@ using UnityEngine.Splines;
 
 public class RaceSplinePath : MonoBehaviour
 {
-    [Tooltip("Segments ordered from the start line to the finish line.")]
+    [Tooltip("Segments ordered from the start line to the finish line. " +
+             "A ordem do array é respeitada: arrasta os elementos para os pôr pela ordem da corrida.")]
     public RaceSplineSegment[] segments;
 
     public float TotalLength { get; private set; }
-    float[] segmentLateralSigns;
-    Vector3[] chicaneLaneDirections;
 
     void Awake()
     {
         CollectSegmentsIfNeeded();
         RecalculateLength();
-        BuildLateralSigns();
         if (segments.Length == 0)
             Debug.LogError($"{name}: no RaceSplineSegment children were found.", this);
     }
@@ -24,13 +22,29 @@ public class RaceSplinePath : MonoBehaviour
     {
         CollectSegmentsIfNeeded();
         RecalculateLength();
-        BuildLateralSigns();
     }
 
+    // ---------- Recolha de segmentos ----------
+
+    // Se o array já tiver exatamente os segmentos filhos, mantém a ordem manual.
+    // Só reconstrói (pela ordem da hierarquia) quando falta ou sobra algum.
     public void CollectSegmentsIfNeeded()
     {
-        RaceSplineSegment[] found =
-            GetComponentsInChildren<RaceSplineSegment>(true);
+        RaceSplineSegment[] found = GetComponentsInChildren<RaceSplineSegment>(true);
+
+        if (segments != null && segments.Length == found.Length)
+        {
+            bool same = true;
+            foreach (var s in segments)
+            {
+                if (s == null || System.Array.IndexOf(found, s) < 0)
+                {
+                    same = false;
+                    break;
+                }
+            }
+            if (same) return;
+        }
 
         var unique = new List<RaceSplineSegment>(found.Length);
         foreach (RaceSplineSegment segment in found)
@@ -42,107 +56,6 @@ public class RaceSplinePath : MonoBehaviour
         segments = unique.ToArray();
     }
 
-    void BuildLateralSigns()
-    {
-        segmentLateralSigns = segments == null
-            ? null
-            : new float[segments.Length];
-        chicaneLaneDirections = segments == null
-            ? null
-            : new Vector3[segments.Length];
-        if (segments == null) return;
-
-        for (int i = 0; i < segments.Length; i++)
-        {
-            RaceSplineSegment segment = segments[i];
-            if (segment == null) continue;
-
-            SplineContainer container = segment.Spline;
-            if (container == null)
-                container = segment.GetComponent<SplineContainer>();
-            if (container == null) continue;
-
-            Vector3 tangent = GetSplineTangent(segment, 0f);
-            Vector3 splineRight = Vector3.Cross(Vector3.up, tangent).normalized;
-            Vector3 physicalRight = Vector3.ProjectOnPlane(
-                container.transform.right,
-                Vector3.up).normalized;
-            segmentLateralSigns[i] =
-                physicalRight.sqrMagnitude > 0.001f &&
-                Vector3.Dot(splineRight, physicalRight) < 0f
-                    ? -1f
-                    : 1f;
-            if (segment.type == RaceSplineSegment.SegmentType.Chicane)
-            {
-                Vector3 start = container.transform.TransformPoint(
-                    SplineUtility.EvaluatePosition(container.Spline, 0f));
-                Vector3 end = container.transform.TransformPoint(
-                    SplineUtility.EvaluatePosition(container.Spline, 1f));
-                Vector3 flow = end - start;
-                flow.y = 0f;
-
-                if (flow.sqrMagnitude > 0.001f)
-                {
-                    Vector3 fixedRight = Vector3.Cross(
-                        Vector3.up,
-                        flow.normalized);
-                    Vector3 segmentRight = container.transform.right;
-                    segmentRight.y = 0f;
-                    if (segmentRight.sqrMagnitude > 0.001f &&
-                        Vector3.Dot(fixedRight, segmentRight) < 0f)
-                    {
-                        fixedRight = -fixedRight;
-                    }
-
-                    chicaneLaneDirections[i] = fixedRight.normalized;
-                }
-            }
-        }
-    }
-
-    static Vector3 GetSplineUp(RaceSplineSegment segment, float t)
-    {
-        SplineContainer container = segment.Spline;
-        if (container == null)
-            container = segment.GetComponent<SplineContainer>();
-        if (container == null) return Vector3.up;
-
-        return container.transform.TransformDirection(
-            SplineUtility.EvaluateUpVector(container.Spline, t)).normalized;
-    }
-
-    static Vector3 GetSplineTangent(RaceSplineSegment segment, float t)
-    {
-        SplineContainer container = segment.Spline;
-        if (container == null)
-            container = segment.GetComponent<SplineContainer>();
-        if (container == null) return Vector3.forward;
-
-        return container.transform.TransformDirection(
-            SplineUtility.EvaluateTangent(container.Spline, t)).normalized;
-    }
-
-    Vector3 GetLaneRight(
-        RaceSplineSegment segment,
-        int segmentIndex,
-        float t)
-    {
-        Vector3 currentTangent = GetSplineTangent(segment, t);
-        if (segment.type == RaceSplineSegment.SegmentType.Chicane &&
-            chicaneLaneDirections != null &&
-            segmentIndex < chicaneLaneDirections.Length &&
-            chicaneLaneDirections[segmentIndex].sqrMagnitude > 0.001f)
-        {
-            return chicaneLaneDirections[segmentIndex];
-        }
-
-        Vector3 right = Vector3.Cross(Vector3.up, currentTangent).normalized;
-        if (segmentLateralSigns != null &&
-            segmentIndex < segmentLateralSigns.Length)
-            right *= segmentLateralSigns[segmentIndex];
-        return right;
-    }
-
     public void RecalculateLength()
     {
         TotalLength = 0f;
@@ -150,14 +63,90 @@ public class RaceSplinePath : MonoBehaviour
 
         foreach (RaceSplineSegment segment in segments)
         {
-            if (segment == null) continue;
-            SplineContainer container = segment.Spline;
-            if (container == null)
-                container = segment.GetComponent<SplineContainer>();
+            SplineContainer container = GetContainer(segment);
             if (container != null)
                 TotalLength += container.Spline.GetLength();
         }
     }
+
+    static SplineContainer GetContainer(RaceSplineSegment segment)
+    {
+        if (segment == null) return null;
+        SplineContainer container = segment.Spline;
+        if (container == null)
+            container = segment.GetComponent<SplineContainer>();
+        return container;
+    }
+
+    // ---------- Validação e gizmos ----------
+
+    [ContextMenu("Validate Connections")]
+    public void ValidateConnections()
+    {
+        CollectSegmentsIfNeeded();
+        int n = segments.Length;
+        if (n < 2)
+        {
+            Debug.Log("Validação: menos de 2 segmentos.");
+            return;
+        }
+
+        int problems = 0;
+        for (int i = 0; i < n; i++)
+        {
+            var a = segments[i];
+            var b = segments[(i + 1) % n];
+            var ca = GetContainer(a);
+            var cb = GetContainer(b);
+            if (ca == null || cb == null) continue;
+
+            Vector3 endPos = ca.transform.TransformPoint(SplineUtility.EvaluatePosition(ca.Spline, 1f));
+            Vector3 startPos = cb.transform.TransformPoint(SplineUtility.EvaluatePosition(cb.Spline, 0f));
+            Vector3 endDir = ca.transform.TransformDirection(SplineUtility.EvaluateTangent(ca.Spline, 1f));
+            Vector3 startDir = cb.transform.TransformDirection(SplineUtility.EvaluateTangent(cb.Spline, 0f));
+
+            float gap = Vector3.Distance(endPos, startPos);
+            float angle = Vector3.Angle(
+                Vector3.ProjectOnPlane(endDir, Vector3.up),
+                Vector3.ProjectOnPlane(startDir, Vector3.up));
+
+            if (gap > 0.05f || angle > 5f)
+            {
+                problems++;
+                Debug.LogWarning(
+                    $"Junta {i} ({a.name}) -> {(i + 1) % n} ({b.name}): " +
+                    $"afastamento {gap:F2} m, ângulo {angle:F1}°", b);
+            }
+        }
+
+        Debug.Log(problems == 0
+            ? "Validação concluída: todas as juntas estão certas."
+            : $"Validação concluída: {problems} junta(s) com problemas.");
+    }
+
+    // Com o RaceSplinePath selecionado: bola verde = início, vermelha = fim, com o número da ordem
+    void OnDrawGizmosSelected()
+    {
+        if (segments == null) return;
+
+        for (int i = 0; i < segments.Length; i++)
+        {
+            SplineContainer c = GetContainer(segments[i]);
+            if (c == null) continue;
+
+            Vector3 a = c.transform.TransformPoint(SplineUtility.EvaluatePosition(c.Spline, 0f));
+            Vector3 b = c.transform.TransformPoint(SplineUtility.EvaluatePosition(c.Spline, 1f));
+
+            Gizmos.color = Color.green; Gizmos.DrawSphere(a, 1f);
+            Gizmos.color = Color.red;   Gizmos.DrawSphere(b, 1f);
+#if UNITY_EDITOR
+            UnityEditor.Handles.Label(a + Vector3.up * 3f, $"{i} início ({segments[i].name})");
+            UnityEditor.Handles.Label(b + Vector3.up * 3f, $"{i} fim");
+#endif
+        }
+    }
+
+    // ---------- Consultas ao circuito ----------
 
     public bool Evaluate(
         float distance,
@@ -170,18 +159,14 @@ public class RaceSplinePath : MonoBehaviour
         forward = Vector3.forward;
         segment = null;
 
-        if (segments == null || segments.Length == 0) return false;
+        if (segments == null || segments.Length == 0 || TotalLength <= 0f) return false;
 
         float wrappedDistance = Mathf.Repeat(distance, TotalLength);
         float passed = 0f;
 
-        for (int segmentIndex = 0; segmentIndex < segments.Length; segmentIndex++)
+        foreach (RaceSplineSegment candidate in segments)
         {
-            RaceSplineSegment candidate = segments[segmentIndex];
-            if (candidate == null) continue;
-            SplineContainer container = candidate.Spline;
-            if (container == null)
-                container = candidate.GetComponent<SplineContainer>();
+            SplineContainer container = GetContainer(candidate);
             if (container == null) continue;
 
             float length = container.Spline.GetLength();
@@ -192,23 +177,44 @@ public class RaceSplinePath : MonoBehaviour
                 continue;
             }
 
-            float t = Mathf.Clamp01((wrappedDistance - passed) / length);
-            Vector3 localPosition = SplineUtility.EvaluatePosition(container.Spline, t);
-            Vector3 localTangent = SplineUtility.EvaluateTangent(container.Spline, t);
-            Vector3 localUp = SplineUtility.EvaluateUpVector(container.Spline, t);
+            float distanceInSegment = wrappedDistance - passed;
+            position = EvaluateCenterPosition(container, distanceInSegment);
+            forward = EvaluateCenterTangent(container, distanceInSegment);
 
-            Vector3 worldPosition = container.transform.TransformPoint(localPosition);
-            Vector3 worldForward = container.transform.TransformDirection(localTangent).normalized;
-            Vector3 worldUp = container.transform.TransformDirection(localUp).normalized;
-            Vector3 right = GetLaneRight(candidate, segmentIndex, t);
+            if (forward.sqrMagnitude > 0.0001f)
+            {
+                Quaternion rotation = Quaternion.LookRotation(forward, Vector3.up);
+                position += rotation * Vector3.right * lateralOffset;
+            }
 
-            position = worldPosition + right * lateralOffset;
-            forward = worldForward;
             segment = candidate;
             return true;
         }
 
         return false;
+    }
+
+    static Vector3 EvaluateCenterPosition(SplineContainer container, float distance)
+    {
+        float t = GetNormalizedDistance(container, distance);
+        Vector3 localPosition = SplineUtility.EvaluatePosition(container.Spline, t);
+        return container.transform.TransformPoint(localPosition);
+    }
+
+    static Vector3 EvaluateCenterTangent(SplineContainer container, float distance)
+    {
+        float t = GetNormalizedDistance(container, distance);
+        Vector3 localTangent = SplineUtility.EvaluateTangent(container.Spline, t);
+        return container.transform.TransformDirection(localTangent).normalized;
+    }
+
+    static float GetNormalizedDistance(SplineContainer container, float distance)
+    {
+        return SplineUtility.ConvertIndexUnit(
+            container.Spline,
+            Mathf.Max(0f, distance),
+            PathIndexUnit.Distance,
+            PathIndexUnit.Normalized);
     }
 
     public float GetClosestDistance(Vector3 worldPosition)
@@ -223,11 +229,7 @@ public class RaceSplinePath : MonoBehaviour
 
         foreach (RaceSplineSegment segment in segments)
         {
-            if (segment == null) continue;
-
-            SplineContainer container = segment.Spline;
-            if (container == null)
-                container = segment.GetComponent<SplineContainer>();
+            SplineContainer container = GetContainer(segment);
             if (container == null) continue;
 
             float length = container.Spline.GetLength();
@@ -243,7 +245,12 @@ public class RaceSplinePath : MonoBehaviour
                 if (sqrDistance < closestSqrDistance)
                 {
                     closestSqrDistance = sqrDistance;
-                    closestDistance = distanceBeforeSegment + t * length;
+                    closestDistance = distanceBeforeSegment +
+                        SplineUtility.ConvertIndexUnit(
+                            container.Spline,
+                            t,
+                            PathIndexUnit.Normalized,
+                            PathIndexUnit.Distance);
                 }
             }
 
@@ -253,19 +260,16 @@ public class RaceSplinePath : MonoBehaviour
         return closestDistance;
     }
 
-    public float GetSegmentProgress(
-        float distance,
-        RaceSplineSegment target)
+    public float GetSegmentProgress(float distance, RaceSplineSegment target)
     {
+        if (TotalLength <= 0f) return 0.5f;
+
         float passed = 0f;
         float wrappedDistance = Mathf.Repeat(distance, TotalLength);
 
         foreach (RaceSplineSegment segment in segments)
         {
-            if (segment == null) continue;
-            SplineContainer container = segment.Spline;
-            if (container == null)
-                container = segment.GetComponent<SplineContainer>();
+            SplineContainer container = GetContainer(segment);
             if (container == null) continue;
 
             float length = container.Spline.GetLength();
@@ -281,6 +285,8 @@ public class RaceSplinePath : MonoBehaviour
 
     public float GetDistanceToSegmentStart(float distance, RaceSplineSegment target)
     {
+        if (TotalLength <= 0f) return float.PositiveInfinity;
+
         float passed = 0f;
         float wrappedDistance = Mathf.Repeat(distance, TotalLength);
 
@@ -289,7 +295,7 @@ public class RaceSplinePath : MonoBehaviour
             if (segment == target)
                 return Mathf.Repeat(passed - wrappedDistance, TotalLength);
 
-            SplineContainer container = segment.Spline;
+            SplineContainer container = GetContainer(segment);
             if (container != null)
                 passed += container.Spline.GetLength();
         }
