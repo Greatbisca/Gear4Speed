@@ -1267,6 +1267,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2719030758639683694, guid: cb3d3c5d72c7f544d99d5be5131c34f1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 344812158}
+    - targetCorrespondingSourceObject: {fileID: 2719030758639683694, guid: cb3d3c5d72c7f544d99d5be5131c34f1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 344812166}
   m_SourcePrefab: {fileID: 100100000, guid: cb3d3c5d72c7f544d99d5be5131c34f1, type: 3}
 --- !u!1 &344812157 stripped
 GameObject:
@@ -1408,7 +1411,7 @@ MonoBehaviour:
   path: {fileID: 298690915}
   player: {fileID: 0}
   lapCounter: {fileID: 0}
-  lateralOffset: 0
+  lateralOffset: -4.4
   heightOffset: 0.5
   rotationOffset: {x: -90, y: 0, z: 0}
   lookDistance: 1
@@ -1427,6 +1430,29 @@ MonoBehaviour:
   minCornerSpeedMs: 3
   fallbackMaxSpeedKmh: 120
   fallbackBrakeDecel: 5
+--- !u!114 &344812166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 344812157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0642dc3438163b34ca856c8bd2a3a2ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AIController
+  map: {fileID: 0}
+  player: {fileID: 0}
+  splineFollower: {fileID: 0}
+  cruiseSpeed: 12
+  slowInCorners: 1
+  cornerSpeed: 8
+  accel: 4
+  brake: 8
+  heightOffset: 0.5
+  lateralOffset: 1.5
+  startTileOffset: 1
 --- !u!1001 &350077412
 PrefabInstance:
   m_ObjectHideFlags: 0

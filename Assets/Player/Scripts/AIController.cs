@@ -5,6 +5,7 @@ public class AIController : MonoBehaviour, ISpeedSource
     [Header("References")]
     public Map_Gen map;
     public PlayerController player;      // used only to stay inside the generated tiles
+    public RaceSplineFollower splineFollower;
 
     [Header("Speed (m/s)")]
     public float cruiseSpeed = 12f;
@@ -27,10 +28,17 @@ public class AIController : MonoBehaviour, ISpeedSource
     {
         if (map == null) map = FindFirstObjectByType<Map_Gen>();
         if (player == null) player = FindFirstObjectByType<PlayerController>();
+        if (splineFollower == null)
+            splineFollower = GetComponent<RaceSplineFollower>()
+                ?? GetComponentInParent<RaceSplineFollower>()
+                ?? GetComponentInChildren<RaceSplineFollower>();
     }
 
     void Start()
     {
+        if (splineFollower != null)
+            return;
+
         TileIndex = startTileOffset;
         t = 0f;
         Place();
@@ -38,6 +46,12 @@ public class AIController : MonoBehaviour, ISpeedSource
 
     void Update()
     {
+        if (splineFollower != null)
+        {
+            UpdateSplineSpeed();
+            return;
+        }
+
         if (map == null) return;
 
         // Our tile was deleted (AI too far behind the player): jump ahead of the player
@@ -54,6 +68,19 @@ public class AIController : MonoBehaviour, ISpeedSource
         CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, target, rate * Time.deltaTime);
 
         FollowRoad(CurrentSpeed * Time.deltaTime);
+    }
+
+    void UpdateSplineSpeed()
+    {
+        float target = cruiseSpeed;
+        if (splineFollower.CurrentSpeedLimitMs < float.PositiveInfinity)
+            target = Mathf.Min(target, splineFollower.CurrentSpeedLimitMs);
+
+        float rate = CurrentSpeed > target ? brake : accel;
+        CurrentSpeed = Mathf.MoveTowards(
+            CurrentSpeed,
+            Mathf.Max(0f, target),
+            rate * Time.deltaTime);
     }
 
     // Corner on this tile or the next one
