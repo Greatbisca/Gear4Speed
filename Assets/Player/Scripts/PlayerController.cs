@@ -122,8 +122,10 @@ public class PlayerController : MonoBehaviour, ISpeedSource
             powerUpKey == KeyCode.RightShift &&
             Keyboard.current.rightShiftKey.wasPressedThisFrame)
             return true;
-#endif
+#else
         return Input.GetKeyDown(powerUpKey);
+#endif
+        return false;
     }
 
     int MaxPowerUpCharges => Mathf.Max(1, chargesToActivate);
@@ -137,6 +139,17 @@ public class PlayerController : MonoBehaviour, ISpeedSource
             return;
         }
 
+        if (TurboActive)
+        {
+            float turboCap = GetTurboSpeedCap();
+            CurrentSpeed = Mathf.MoveTowards(
+                CurrentSpeed,
+                turboCap,
+                turboAcceleration * dt);
+            gearbox.UpdateRpm(CurrentSpeed);
+            return;
+        }
+
         float cornerLimit = splineFollower != null
             ? splineFollower.CurrentSpeedLimitMs
             : corners != null
@@ -146,9 +159,6 @@ public class PlayerController : MonoBehaviour, ISpeedSource
         float gearMax = gearbox.MaxSpeed;
 
         float cap = Mathf.Min(gearMax, cornerLimit);
-        float turboCap = GetTurboSpeedCap();
-        if (TurboActive)
-            cap = Mathf.Min(turboCap, cornerLimit);
         float splineCornerBrake = splineFollower != null
             ? splineFollower.CurrentCornerBrakeDeceleration
             : 0f;
@@ -194,9 +204,6 @@ public class PlayerController : MonoBehaviour, ISpeedSource
             else
             {
                 float acceleration = gearbox.Acceleration * accelerationMultiplier;
-                if (TurboActive)
-                    acceleration = Mathf.Max(acceleration, turboAcceleration);
-
                 CurrentSpeed = Mathf.Min(
                     CurrentSpeed + acceleration * dt,
                     cap);

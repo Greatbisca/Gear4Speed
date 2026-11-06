@@ -434,6 +434,10 @@ MonoBehaviour:
   pedalPressed: {fileID: 2800000, guid: a8560d55b2dfbd34d95a3bfa7bd2ebb5, type: 3}
   pedalBottomNormal: -27
   pedalBottomPressed: -36
+  gearScreenNormal: {fileID: 0}
+  gearScreenUp5: {fileID: 0}
+  gearScreenUp6: {fileID: 0}
+  gearPromptBlinkSpeed: 5
   column0X: -18
   columnStep: 36
   neutralY: 44
@@ -2783,6 +2787,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UIDocument
       objectReference: {fileID: 0}
+    - target: {fileID: 8322238947764832443, guid: 4b09521856a1f3c48b213e47b0713e61, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3601321364876148712, guid: 4b09521856a1f3c48b213e47b0713e61, type: 3}
     m_RemovedGameObjects: []
@@ -4909,6 +4917,11 @@ MonoBehaviour:
   greenBonus: 1
   redPenalty: 0.85
   engineBrake: 5
+  chargesToActivate: 5
+  turboDuration: 2
+  turboSpeedMultiplier: 1.15
+  turboAcceleration: 20
+  powerUpKey: 303
 --- !u!114 &1983684929
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5265,6 +5278,51 @@ MonoBehaviour:
   target: {fileID: 1983684937}
   height: 100
   rotateWithTarget: 1
+--- !u!1001 &2000000001
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 665819088593216294, guid: bcdd9e37aa281cf4bab98ccc110bbaef, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 665819088593216294, guid: bcdd9e37aa281cf4bab98ccc110bbaef, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 665819088593216294, guid: bcdd9e37aa281cf4bab98ccc110bbaef, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3601321364876148713, guid: bcdd9e37aa281cf4bab98ccc110bbaef, type: 3}
+      propertyPath: radius
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 3601321364876148713, guid: bcdd9e37aa281cf4bab98ccc110bbaef, type: 3}
+      propertyPath: thickness
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 3601321364876148713, guid: bcdd9e37aa281cf4bab98ccc110bbaef, type: 3}
+      propertyPath: centerOffset.y
+      value: 46
+      objectReference: {fileID: 0}
+    - target: {fileID: 3601321364876148713, guid: bcdd9e37aa281cf4bab98ccc110bbaef, type: 3}
+      propertyPath: inFrontOfGauge
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8322238947764832443, guid: bcdd9e37aa281cf4bab98ccc110bbaef, type: 3}
+      propertyPath: m_Name
+      value: Singleplayer_UI
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdd9e37aa281cf4bab98ccc110bbaef, type: 3}
 --- !u!114 &2003803407 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5965620301588475001, guid: 1f8b8ef9e84eb6a49a6e8466e7da82e7, type: 3}
@@ -6355,5 +6413,6 @@ SceneRoots:
   - {fileID: 6412993801800438227}
   - {fileID: 298690916}
   - {fileID: 917336289}
+  - {fileID: 2000000001}
   - {fileID: 1999437647}
   - {fileID: 1757582332}
