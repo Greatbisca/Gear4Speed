@@ -9,6 +9,7 @@ public class comandos_singleplayer : MonoBehaviour
 	[SerializeField] private Image m_manipulo;
 	[SerializeField] private Image m_upgrade5;
 	[SerializeField] private Image m_upgrade6;
+	[SerializeField] private Image m_upgradeBar;
 	
 	//-------------------------------------------------------//
 	[SerializeField] private Texture2D acelarador_normal;
@@ -27,6 +28,9 @@ public class comandos_singleplayer : MonoBehaviour
 	//Limites para upgrades
 	Vector2Int limite_horizontal = new Vector2Int(-1, 1);
 	bool up6 = false;
+	
+	//Valor da barra de upgrade || cheio = 240
+	int upgrade_value = 0;
 	
 	// Posições das mudanças
 	Vector2[] posicoes = {
@@ -57,6 +61,8 @@ public class comandos_singleplayer : MonoBehaviour
 		m_upgrade5 = UI.rootVisualElement.Q<Image>("upgrade_5");
 		m_upgrade6 = UI.rootVisualElement.Q<Image>("upgrade_6");
 		m_ecra = UI.rootVisualElement.Q<Image>("gearscreen");
+		m_upgradeBar = UI.rootVisualElement.Q<Image>("up_bar");
+		
 		//posição inicial do manipuço
 		m_manipulo.style.left = posicoes[0].x;
 		m_manipulo.style.bottom = posicoes[0].y;
@@ -166,5 +172,16 @@ public class comandos_singleplayer : MonoBehaviour
 			m_acelarador.style.backgroundImage = new StyleBackground(acelarador_normal);
 			m_acelarador.style.bottom = -27;
 		}
+		
+		//----Barra de Upgrade----//
+		//Código de teste apenas para encher a barra
+		if (upgrade_value < 240)
+		{
+			upgrade_value++;
+		}
+		
+		//Define o valor da barra de upgrade
+		m_upgradeBar.style.width = upgrade_value;
+		
     }
 }
