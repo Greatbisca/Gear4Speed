@@ -252,7 +252,7 @@ MonoBehaviour:
   maxTopSpeed: 250
   maxAcceleration: 10
   spinSpeed: 30
-  raceScene: Player
+  raceScene: Main Scene
   menuScene: MainMenu
 --- !u!1 &308209817
 GameObject:
