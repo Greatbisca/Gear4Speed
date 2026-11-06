@@ -4,6 +4,7 @@ public class PlayerController : MonoBehaviour, ISpeedSource
 {
     public Gearbox gearbox;
     public CornerBraking corners;
+    public RaceSplineFollower splineFollower;
     public Map_Gen map;
     
     public float heightOffset = 0.5f;
@@ -22,18 +23,38 @@ public class PlayerController : MonoBehaviour, ISpeedSource
 
     void Awake()
     {
+        if (gearbox == null)
+            gearbox = GetComponent<Gearbox>()
+                ?? GetComponentInChildren<Gearbox>()
+                ?? GetComponentInParent<Gearbox>();
+        if (splineFollower == null)
+            splineFollower = GetComponent<RaceSplineFollower>()
+                ?? GetComponentInChildren<RaceSplineFollower>()
+                ?? GetComponentInParent<RaceSplineFollower>();
         if (map == null) map = FindFirstObjectByType<Map_Gen>();
     }
 
     void Start()
     {
+        if (splineFollower != null)
+            return;
+
         TileIndex = 0;
         t = 0f;
         Place();
     }
 
-    void OnEnable()  => gearbox.Shifted += OnShifted;
-    void OnDisable() => gearbox.Shifted -= OnShifted;
+    void OnEnable()
+    {
+        if (gearbox != null)
+            gearbox.Shifted += OnShifted;
+    }
+
+    void OnDisable()
+    {
+        if (gearbox != null)
+            gearbox.Shifted -= OnShifted;
+    }
 
     void OnShifted(ShiftZone zone)
     {
@@ -44,12 +65,24 @@ public class PlayerController : MonoBehaviour, ISpeedSource
     void Update()
     {
         UpdateSpeed(Time.deltaTime);
-        FollowRoad(CurrentSpeed * Time.deltaTime);
+        if (splineFollower == null)
+            FollowRoad(CurrentSpeed * Time.deltaTime);
     }
 
     void UpdateSpeed(float dt)
     {
-        float cornerLimit = corners != null ? corners.SpeedLimit : float.PositiveInfinity;
+        if (gearbox == null)
+        {
+            Debug.LogError($"{name}: PlayerController requires a Gearbox reference.", this);
+            enabled = false;
+            return;
+        }
+
+        float cornerLimit = splineFollower != null
+            ? splineFollower.CurrentSpeedLimitMs
+            : corners != null
+                ? corners.SpeedLimit
+                : float.PositiveInfinity;
         float cornerBrake = corners != null ? corners.BrakeDecel : 0f;
         float gearMax = gearbox.MaxSpeed;
 
