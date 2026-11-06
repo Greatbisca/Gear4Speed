@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
 
-public class comandos : MonoBehaviour
+public class comandos_singleplayer : MonoBehaviour
 {
 	[SerializeField] private Image m_ecra;
 	[SerializeField] private Image m_acelarador;
