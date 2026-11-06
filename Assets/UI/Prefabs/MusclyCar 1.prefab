@@ -230,7 +230,7 @@ GameObject:
   - component: {fileID: 247993055841177057}
   - component: {fileID: 8455503471986598193}
   m_Layer: 0
-  m_Name: Muscle wheel front right
+  m_Name: MusclyCar 1 wheel front right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -321,7 +321,7 @@ GameObject:
   - component: {fileID: 6717413112432454247}
   - component: {fileID: 2770337997689740349}
   m_Layer: 0
-  m_Name: Muscle wheel front left
+  m_Name: MusclyCar 1 wheel front left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -412,7 +412,7 @@ GameObject:
   - component: {fileID: 8324101129308190705}
   - component: {fileID: 6901908815288663090}
   m_Layer: 0
-  m_Name: Muscle wheel rear right
+  m_Name: MusclyCar 1 wheel rear right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -503,7 +503,7 @@ GameObject:
   - component: {fileID: 8904670006955211839}
   - component: {fileID: 4372300751102102873}
   m_Layer: 0
-  m_Name: Muscle wheel rear left
+  m_Name: MusclyCar 1 wheel rear left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
