@@ -1,0 +1,366 @@
+fileFormatVersion: 2
+guid: e9f1ed063b86a174ca7cc014310b081c
+ModelImporter:
+  serializedVersion: 24300
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Garage_wall_textures_mat_concrete_wall_001_BaseColor
+    second: {fileID: 2800000, guid: 2d315159a423d1c45b309b531bd55f66, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Garage_wall_textures_mat_concrete_wall_001_Normal
+    second: {fileID: 2800000, guid: fed8bc2c263d8364c9fea8b3e6a341b7, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Garage_wall_textures_mat_concrete_wall_001_Roughness
+    second: {fileID: 2800000, guid: b2c45b86a60b50c4d8e70e41c51e3edb, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Material_Base_color
+    second: {fileID: 2800000, guid: c4a00b608854193458f53ea0a9d2cb42, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Material_Normal_OpenGL
+    second: {fileID: 2800000, guid: 6665a030d1e2eca41b1ba3f83f62efc9, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Material_Roughness
+    second: {fileID: 2800000, guid: 21e3474a9c896994fbf44ec102a22fce, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: dec_damage_wall_Color
+    second: {fileID: 2800000, guid: 84158b2ed8d9cf8439d1a579b75cd08c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: dec_damage_wall_Mask
+    second: {fileID: 2800000, guid: c413e0faac554ed46b327c1877a45b2a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: dec_damage_wall_Normal
+    second: {fileID: 2800000, guid: 0d0c81d1b4c97dd41960bc8b2045cffe, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: dec_garage_sewage_BaseColor
+    second: {fileID: 2800000, guid: 5106b5ceb3d79224ba5b35b9a0c8d79e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: dec_garage_sewage_Metallic
+    second: {fileID: 2800000, guid: 522d05bc1e244eb499051e23b10af882, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: dec_garage_sewage_Normal
+    second: {fileID: 2800000, guid: d5f0577ddf5b8ce41aac2be859e1b0a6, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: dec_garage_sewage_Roughness
+    second: {fileID: 2800000, guid: 4e6f9ecf0ed9eb54c81d10247bd04930, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: dec_garage_sewage_alphamask
+    second: {fileID: 2800000, guid: 6cfe966ff3368be43bd72421ca5d38f5, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_cable_Normal_OpenGL
+    second: {fileID: 2800000, guid: b5bc737bb2a9eb549aad8d26fce604ab, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_cable_alphamask
+    second: {fileID: 2800000, guid: abd896f928ad4ca4a961c4098565753d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_canister_Base_color
+    second: {fileID: 2800000, guid: 12e0bb8615939524e8f6600a3e502960, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_canister_Emissive
+    second: {fileID: 2800000, guid: 3220a15fe1026c64b9352457f01b9a0b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_canister_Normal_OpenGL
+    second: {fileID: 2800000, guid: 51a8fd7aeff423044b00d7b543e0d467, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_canister_Roughness
+    second: {fileID: 2800000, guid: 9dbf643e45c09c543bb4970b638801ed, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_car_jack_Base_color
+    second: {fileID: 2800000, guid: d20953100e5cae843b2a200e66df97ef, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_car_jack_Metallic
+    second: {fileID: 2800000, guid: b07a7a72f6081ed468d01c803f8232cd, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_car_jack_Normal_OpenGL
+    second: {fileID: 2800000, guid: 50a5858de9efabd4bb3604c3c3693d16, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_car_jack_Roughness
+    second: {fileID: 2800000, guid: dec2bea7b95fd1f4eb9e18d6689957de, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_concrete_slabs_Base_color
+    second: {fileID: 2800000, guid: 6584fba6fc6b9e74bb802401c79fb881, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_concrete_slabs_Normal_OpenGL
+    second: {fileID: 2800000, guid: 2e4645685929c8c469036fc6ca91951c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_concrete_slabs_Roughness
+    second: {fileID: 2800000, guid: 949372867a1b62c45be7b1fac874cf90, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_floor_diffuseOriginal
+    second: {fileID: 2800000, guid: 99a75c2e544fc364f85be2e645b725e8, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_floor_normal
+    second: {fileID: 2800000, guid: b67b916c95eabf5448285be9f6be822b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_lamp_base_color
+    second: {fileID: 2800000, guid: 11ccc37f1bd28e1419600df1ee8aaf60, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_metal_BaseColor
+    second: {fileID: 2800000, guid: b7aa5216b5fbab449947269f1dbba590, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_metal_Normal
+    second: {fileID: 2800000, guid: 09bf51fa8b10a624e828948740b1338a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_metal_Roughness
+    second: {fileID: 2800000, guid: 8a40266408b269c4cb83db9bf9db1551, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_poster_color
+    second: {fileID: 2800000, guid: 42a41f323809a9441bb7abbe0032a707, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_tool_table_Metallic
+    second: {fileID: 2800000, guid: b3a81e2e4b4337d40ae1346442b24913, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_tool_table_Normal_OpenGL
+    second: {fileID: 2800000, guid: 1a570bdf99040784887d448b9653d40a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_tool_table_Roughness
+    second: {fileID: 2800000, guid: 47139e3717c69fc4c8690a6a890b4af5, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_wheel_BaseColor
+    second: {fileID: 2800000, guid: b76c733a2a39a9e4b93bfd00d0262a4a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_wheel_Metallic
+    second: {fileID: 2800000, guid: 87073894819a91e46b6d73fa2e434a64, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_wheel_Normal
+    second: {fileID: 2800000, guid: 791d06a8df651f84094f11a4a5f9496c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_wheel_Roughness
+    second: {fileID: 2800000, guid: fb8b545a89a8eec48a6c28e51ecc6aec, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_wood_diffuse
+    second: {fileID: 2800000, guid: 93c0f99175f5f8c4abe2b1d7333fc72d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_garage_wood_normal
+    second: {fileID: 2800000, guid: be66e9fd4725c2043b71bec8e42e2294, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_tool_stand_Metallic
+    second: {fileID: 2800000, guid: 7971b6d33ce375546bbafa868e04056a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_tool_stand_Normal_OpenGL
+    second: {fileID: 2800000, guid: 4e263b08674822b4f8af5170c0ae7094, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: mat_tool_stand_Roughness
+    second: {fileID: 2800000, guid: 8b07370ab313bcf4fba5f9cb2afb7777, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: trim_garage_metal_BaseColor
+    second: {fileID: 2800000, guid: 4e14b39992def5345b5059d1b8b1cebe, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: trim_garage_metal_Metallic
+    second: {fileID: 2800000, guid: dbfd92ef078510d49b7ce8163aac8cd6, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: trim_garage_metal_Normal
+    second: {fileID: 2800000, guid: 61fa8a05747533440998ea4a93f0d008, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: trim_garage_metal_Roughness
+    second: {fileID: 2800000, guid: a6b317b64ebd24a429856ebe46fc607d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: trim_garage_metal_blue_BaseColor
+    second: {fileID: 2800000, guid: 0fb4d3f4ac37554438c3c30034815d22, type: 3}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+    searchTexturesGlobally: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
