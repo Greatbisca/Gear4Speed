@@ -1,4 +1,7 @@
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 public class PlayerController : MonoBehaviour, ISpeedSource
 {
@@ -21,11 +24,25 @@ public class PlayerController : MonoBehaviour, ISpeedSource
     public float redPenalty = 0.9f;        // speed multiplier on a red shift
     public float engineBrake = 5f;
 
+    [Header("Power-up")]
+    [Min(1)]
+    public int chargesToActivate = 5;
+    [Min(0.1f)]
+    public float turboDuration = 2f;
+    [Min(1f)]
+    public float turboSpeedMultiplier = 1.15f;
+    [Min(0f)]
+    public float turboAcceleration = 20f;
+    public KeyCode powerUpKey = KeyCode.RightShift;
+
 
     public float CurrentSpeed { get; private set; }   // m/s
     public int TileIndex { get; private set; }
+    public int PowerUpCharges { get; private set; }
+    public bool TurboActive => turboTimeRemaining > 0f;
 
     float t;   // progress along the current tile, 0..1
+    float turboTimeRemaining;
 
     void Awake()
     {
@@ -64,16 +81,52 @@ public class PlayerController : MonoBehaviour, ISpeedSource
 
     void OnShifted(ShiftZone zone)
     {
-        if (zone == ShiftZone.Green && gearbox.LastShiftWasUp) CurrentSpeed += greenBonus;
+        if (zone == ShiftZone.Green && gearbox.LastShiftWasUp)
+        {
+            CurrentSpeed += greenBonus;
+            PowerUpCharges = Mathf.Min(
+                PowerUpCharges + 1,
+                MaxPowerUpCharges);
+        }
         if (zone == ShiftZone.Red) CurrentSpeed *= redPenalty;
     }
 
     void Update()
     {
+        TryActivatePowerUp();
+        if (turboTimeRemaining > 0f)
+            turboTimeRemaining = Mathf.Max(
+                0f,
+                turboTimeRemaining - Time.deltaTime);
+
         UpdateSpeed(Time.deltaTime);
         if (splineFollower == null)
             FollowRoad(CurrentSpeed * Time.deltaTime);
     }
+
+    void TryActivatePowerUp()
+    {
+        if (!PowerUpButtonPressed() ||
+            turboTimeRemaining > 0f ||
+            PowerUpCharges < Mathf.Max(1, chargesToActivate))
+            return;
+
+        PowerUpCharges -= Mathf.Max(1, chargesToActivate);
+        turboTimeRemaining = turboDuration;
+    }
+
+    bool PowerUpButtonPressed()
+    {
+#if ENABLE_INPUT_SYSTEM
+        if (Keyboard.current != null &&
+            powerUpKey == KeyCode.RightShift &&
+            Keyboard.current.rightShiftKey.wasPressedThisFrame)
+            return true;
+#endif
+        return Input.GetKeyDown(powerUpKey);
+    }
+
+    int MaxPowerUpCharges => Mathf.Max(1, chargesToActivate);
 
     void UpdateSpeed(float dt)
     {
@@ -93,6 +146,9 @@ public class PlayerController : MonoBehaviour, ISpeedSource
         float gearMax = gearbox.MaxSpeed;
 
         float cap = Mathf.Min(gearMax, cornerLimit);
+        float turboCap = GetTurboSpeedCap();
+        if (TurboActive)
+            cap = Mathf.Min(turboCap, cornerLimit);
         float splineCornerBrake = splineFollower != null
             ? splineFollower.CurrentCornerBrakeDeceleration
             : 0f;
@@ -136,12 +192,27 @@ public class PlayerController : MonoBehaviour, ISpeedSource
             else if (CurrentSpeed > cap)     // above the corner limit or the gear's top speed
                 CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, cap, brakeRate * dt);
             else
+            {
+                float acceleration = gearbox.Acceleration * accelerationMultiplier;
+                if (TurboActive)
+                    acceleration = Mathf.Max(acceleration, turboAcceleration);
+
                 CurrentSpeed = Mathf.Min(
-                    CurrentSpeed + gearbox.Acceleration * accelerationMultiplier * dt,
+                    CurrentSpeed + acceleration * dt,
                     cap);
+            }
 
             gearbox.UpdateRpm(CurrentSpeed);
         }
+    }
+
+    float GetTurboSpeedCap()
+    {
+        float normalTopSpeed = gearbox.gears != null &&
+            gearbox.gears.Length > 0
+            ? gearbox.gears[gearbox.gears.Length - 1].maxSpeed
+            : gearbox.MaxSpeed;
+        return normalTopSpeed * turboSpeedMultiplier;
     }
 
     // ---------- Road following ----------
