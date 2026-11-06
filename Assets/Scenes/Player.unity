@@ -1232,16 +1232,16 @@ MonoBehaviour:
   gears:
   - name: 1st
     maxSpeed: 12
-    acceleration: 4
+    acceleration: 6
   - name: 2nd
     maxSpeed: 18
-    acceleration: 3.5
+    acceleration: 5
   - name: 3rd
     maxSpeed: 27
-    acceleration: 3
+    acceleration: 4
   - name: 4th
     maxSpeed: 40.5
-    acceleration: 2.5
+    acceleration: 3
   idleRpm: 800
   shiftPromptRpm: 3000
   downshiftPromptRpm: 1200
@@ -1256,6 +1256,8 @@ MonoBehaviour:
   greenHalfWidth: 100
   yellowHalfWidth: 250
   fallRate: 400
+  stallRpm: 500
+  shiftSpeedMultiplier: 2.5
 --- !u!114 &901241753
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1274,8 +1276,11 @@ MonoBehaviour:
   heightOffset: 0
   lateralOffset: 1.5
   clutchDrag: 0.8
-  greenBonus: 1
-  redPenalty: 0.85
+  accelerationMultiplier: 1.3
+  engineBogStrength: 2
+  engineBogSpeedFraction: 0.2
+  greenBonus: 1.5
+  redPenalty: 0.9
   engineBrake: 5
 --- !u!1001 &1330965599
 PrefabInstance:

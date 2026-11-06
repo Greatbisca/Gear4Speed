@@ -25,10 +25,10 @@ public class Gearbox : MonoBehaviour
 
     public GearSetting[] gears =
     {
-        new GearSetting { name = "1st", maxSpeed = 12f,   acceleration = 4f   },
-        new GearSetting { name = "2nd", maxSpeed = 18f,   acceleration = 3.5f },
-        new GearSetting { name = "3rd", maxSpeed = 27f,   acceleration = 3f   },
-        new GearSetting { name = "4th", maxSpeed = 40.5f, acceleration = 2.5f },
+        new GearSetting { name = "1st", maxSpeed = 12f,   acceleration = 6f   },
+        new GearSetting { name = "2nd", maxSpeed = 18f,   acceleration = 5f   },
+        new GearSetting { name = "3rd", maxSpeed = 27f,   acceleration = 4f   },
+        new GearSetting { name = "4th", maxSpeed = 40.5f, acceleration = 3f   },
     };
 
     public float idleRpm = 800f;
@@ -53,9 +53,14 @@ public class Gearbox : MonoBehaviour
     public float greenHalfWidth = 100f;
     public float yellowHalfWidth = 250f;
     public float fallRate = 400f;            // RPM per second while the needle moves
+    [Min(1f)]
+    public float shiftSpeedMultiplier = 2.5f;
+    [Min(0f)]
+    public float stallRpm = 500f;
 
     public int CurrentGear { get; private set; } = 1;
     public float Rpm { get; private set; }
+    public bool EngineRunning { get; private set; } = true;
     public bool InClutch { get; private set; }
     public bool GearSelected { get; private set; }
     public float ZoneCenter { get; private set; }
@@ -76,13 +81,16 @@ public class Gearbox : MonoBehaviour
     int shiftDir;
     GearSetting[] defaultGears;
 
-    GearSetting Current => gears[CurrentGear - 1];
+    GearSetting Current => gears[Mathf.Clamp(CurrentGear - 1, 0, gears.Length - 1)];
     public int GearCount => gears.Length;
     float SpeedPerRpm => Current.maxSpeed / limiterRpm;
 
-    public float MaxSpeed => Current.maxSpeed;
+    public float MaxSpeed => CurrentGear == 0 ? 0f : Current.maxSpeed;
     public float Acceleration =>
-        Current.acceleration * Mathf.Lerp(lugFactor, 1f, Mathf.InverseLerp(idleRpm, powerRpm, Rpm));
+        EngineRunning && CurrentGear > 0
+            ? Current.acceleration * Mathf.Lerp(
+                lugFactor, 1f, Mathf.InverseLerp(idleRpm, powerRpm, Rpm))
+            : 0f;
 
     // 0 = no prompt, otherwise the gear the player should shift to
     public int PromptGear
@@ -149,6 +157,8 @@ public class Gearbox : MonoBehaviour
     void ResetState()
     {
         CurrentGear = 1;
+        EngineRunning = true;
+        Rpm = idleRpm;
         InClutch = false;
         GearSelected = false;
         targetGear = 1;
@@ -157,7 +167,26 @@ public class Gearbox : MonoBehaviour
     }
 
     public void UpdateRpm(float speed) =>
-        Rpm = Mathf.Clamp(speed / SpeedPerRpm, idleRpm, limiterRpm);
+        Rpm = EngineRunning
+            ? Mathf.Clamp(speed / SpeedPerRpm, idleRpm, limiterRpm)
+            : 0f;
+
+    public bool ShouldStall(float speed)
+    {
+        return EngineRunning &&
+            CurrentGear >= 3 &&
+            speed / SpeedPerRpm <= stallRpm;
+    }
+
+    public void Stall()
+    {
+        EngineRunning = false;
+        CurrentGear = 0;
+        targetGear = 0;
+        InClutch = false;
+        GearSelected = false;
+        Rpm = 0f;
+    }
 
     public float GreenMin => ZoneCenter - greenHalfWidth;
     public float GreenMax => ZoneCenter + greenHalfWidth;
@@ -187,8 +216,10 @@ public class Gearbox : MonoBehaviour
         GearSelected = false;
 
         // stick starts in the slot of the current gear
-        StickColumn = (CurrentGear - 1) / 2;
-        StickRow = CurrentGear % 2 == 1 ? 1 : -1;
+        StickColumn = CurrentGear > 0 ? (CurrentGear - 1) / 2 : 0;
+        StickRow = CurrentGear > 0
+            ? CurrentGear % 2 == 1 ? 1 : -1
+            : 0;
         targetGear = CurrentGear;
 
         ClutchPressed?.Invoke();
@@ -250,7 +281,10 @@ public class Gearbox : MonoBehaviour
     public void TickClutch(float dt)
     {
         if (GearSelected)
-            Rpm = Mathf.Clamp(Rpm - shiftDir * fallRate * dt, idleRpm, limiterRpm);
+            Rpm = Mathf.Clamp(
+                Rpm - shiftDir * fallRate * shiftSpeedMultiplier * dt,
+                idleRpm,
+                limiterRpm);
     }
 
     public void ReleaseClutch()
@@ -263,6 +297,11 @@ public class Gearbox : MonoBehaviour
 
         ShiftZone zone = ZoneFor(Rpm);
         CurrentGear = targetGear;
+        if (!EngineRunning && CurrentGear == 1)
+        {
+            EngineRunning = true;
+            Rpm = idleRpm;
+        }
         LastShiftWasUp = shiftDir > 0;
         GearSelected = false;
         Shifted?.Invoke(zone);
@@ -289,6 +328,7 @@ public class Gearbox : MonoBehaviour
         left    = Input.GetKeyDown(KeyCode.LeftArrow);
         right   = Input.GetKeyDown(KeyCode.RightArrow);
 #endif
+        if (!EngineRunning) return;
         if (press) PressClutch();
         if (up) MoveStick(0, +1);
         if (down) MoveStick(0, -1);

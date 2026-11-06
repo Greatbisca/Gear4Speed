@@ -92,6 +92,12 @@ public class CarSpawner : MonoBehaviour
         }
         else
             player.gearbox.ResetToDefault();   // carro sem stats: usa os defaults
+
+        RaceSplineFollower follower = player.GetComponent<RaceSplineFollower>()
+            ?? player.GetComponentInChildren<RaceSplineFollower>()
+            ?? player.GetComponentInParent<RaceSplineFollower>();
+        if (follower != null)
+            follower.InitializeFromCurrentPosition();
     }
 
     static Gearbox.GearSetting[] CloneGears(Gearbox.GearSetting[] source, float targetTopSpeed)

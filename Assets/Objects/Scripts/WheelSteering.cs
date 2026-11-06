@@ -4,13 +4,14 @@ using UnityEngine;
 public class WheelSteering : MonoBehaviour
 {
     public float maxSteerAngle = 35f;
-    public float smoothing = 12f;
-    public float minSpeed = 0.5f;
+    public float smoothing = 12f;      // maior = resposta mais rápida
+    public float minSpeed = 0.5f;      // abaixo disto não vira (evita tremer parado)
 
     [Header("Opcional: input direto do jogador")]
     public bool usePlayerInput = false;
 
     CarWheels car;
+    RaceSplineFollower follower;
     Transform src;
     float lastYaw;
     float current;
@@ -19,7 +20,16 @@ public class WheelSteering : MonoBehaviour
     {
         car = GetComponent<CarWheels>();
         src = car.motionSource != null ? car.motionSource : transform;
-        lastYaw = src.eulerAngles.y;
+        follower = GetComponentInParent<RaceSplineFollower>();
+        lastYaw = CurrentYaw();
+    }
+
+    // Direção da estrada em graus (0..360), sem depender da rotação -90 do player
+    float CurrentYaw()
+    {
+        if (follower != null && follower.Heading.sqrMagnitude > 0.01f)
+            return Mathf.Atan2(follower.Heading.x, follower.Heading.z) * Mathf.Rad2Deg;
+        return src.eulerAngles.y;   // sem follower (mapa antigo)
     }
 
     void LateUpdate()
@@ -35,8 +45,8 @@ public class WheelSteering : MonoBehaviour
         }
         else
         {
-            float yaw = src.eulerAngles.y;
-            float yawRate = Mathf.DeltaAngle(lastYaw, yaw) / dt;
+            float yaw = CurrentYaw();
+            float yawRate = Mathf.DeltaAngle(lastYaw, yaw) / dt;   // graus/s
             lastYaw = yaw;
 
             float speed = car.SignedSpeed;
@@ -46,6 +56,7 @@ public class WheelSteering : MonoBehaviour
             }
             else
             {
+                // modelo de bicicleta: tan(ângulo) = distância entre eixos * yawRate / velocidade
                 float yawRad = yawRate * Mathf.Deg2Rad;
                 target = Mathf.Atan(car.WheelBase * yawRad / speed) * Mathf.Rad2Deg;
                 target = Mathf.Clamp(target, -maxSteerAngle, maxSteerAngle);
