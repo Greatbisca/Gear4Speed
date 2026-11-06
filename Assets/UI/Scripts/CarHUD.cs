@@ -18,6 +18,12 @@ public class CarHUD : MonoBehaviour
     public float pedalBottomNormal = -27f;
     public float pedalBottomPressed = -36f;
 
+    [Header("Sprites do ecrã de mudanças")]
+    public Texture2D gearScreenNormal;
+    public Texture2D gearScreenUp5;
+    public Texture2D gearScreenUp6;
+    public float gearPromptBlinkSpeed = 5f;
+
     [Header("Posições do manipulo (left / bottom)")]
     [Tooltip("x da coluna 0 (mudanças 1 e 2). Cada coluna seguinte soma 'columnStep'.")]
     public float column0X = -18f;
@@ -38,8 +44,8 @@ public class CarHUD : MonoBehaviour
 
     public float needleSmoothing = 12f;
 
-    VisualElement knob, pedal, upgrade5, upgrade6, needleRpm, needleSpeed;
-    Label speedLabel;
+    VisualElement knob, pedal, gearScreen, upgrade5, upgrade6, needleRpm, needleSpeed;
+    Label speedLabel, gearLabel;
     Gearbox gb;
     int lastGearCount = -1;
     int lastKnobRow = 99;
@@ -47,17 +53,20 @@ public class CarHUD : MonoBehaviour
     Vector2 knobPos;
     bool knobInit;
     float rpmAngle, speedAngle;
+    float gearPromptBlinkTimer;
 
     void OnEnable()
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
         knob = root.Q<VisualElement>("manipulo");
         pedal = root.Q<VisualElement>("acelarador");
+        gearScreen = root.Q<VisualElement>("gearscreen");
         upgrade5 = root.Q<VisualElement>("upgrade_5");
         upgrade6 = root.Q<VisualElement>("upgrade_6");
         needleRpm = root.Q<VisualElement>("ponteiro_r");
         needleSpeed = root.Q<VisualElement>("ponteiro_v");
         speedLabel = root.Q<Label>("display_velocimetro");
+        gearLabel = root.Q<Label>("gear_display");
 
         rpmAngle = rpmMinAngle;
         speedAngle = speedMinAngle;
@@ -77,6 +86,38 @@ public class CarHUD : MonoBehaviour
         UpdateKnob(dt);
         UpdatePedal();
         UpdateNeedles(dt);
+        UpdateGearScreen(dt);
+    }
+
+    void UpdateGearScreen(float dt)
+    {
+        if (gearScreen != null)
+        {
+            Texture2D screen = gb.GearCount >= 6
+                ? gearScreenUp6
+                : gb.GearCount >= 5
+                    ? gearScreenUp5
+                    : gearScreenNormal;
+            if (screen != null)
+                gearScreen.style.backgroundImage = new StyleBackground(screen);
+        }
+
+        if (gearLabel == null)
+            return;
+
+        if (gb.ShiftPromptActive)
+        {
+            gearPromptBlinkTimer += dt * Mathf.Max(0.1f, gearPromptBlinkSpeed);
+            bool visible = Mathf.FloorToInt(gearPromptBlinkTimer) % 2 == 0;
+            gearLabel.text = visible ? gb.NextGear.ToString() : string.Empty;
+        }
+        else
+        {
+            gearPromptBlinkTimer = 0f;
+            gearLabel.text = gb.CurrentGear > 0
+                ? gb.CurrentGear.ToString()
+                : "N";
+        }
     }
 
     // 5ª e 6ª aparecem conforme o carro
