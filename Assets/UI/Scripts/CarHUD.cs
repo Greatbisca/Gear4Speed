@@ -36,15 +36,20 @@ public class CarHUD : MonoBehaviour
     [Header("Conta-rotações (ponteiro_r)")]
     public float rpmMinAngle = -120f;
     public float rpmMaxAngle = 120f;
+    public float rpmNeedleAngleOffset = -5f;
 
     [Header("Velocímetro (ponteiro_v + número)")]
     public float maxSpeedKmh = 160f;
     public float speedMinAngle = -120f;
     public float speedMaxAngle = 120f;
 
+    [Header("Barra do power-up")]
+    [Min(0f)]
+    public float powerUpBarWidth = 240f;
+
     public float needleSmoothing = 12f;
 
-    VisualElement knob, pedal, gearScreen, upgrade5, upgrade6, needleRpm, needleSpeed;
+    VisualElement knob, pedal, gearScreen, upgrade5, upgrade6, powerUpBar, needleRpm, needleSpeed;
     Label speedLabel, gearLabel;
     Gearbox gb;
     int lastGearCount = -1;
@@ -63,6 +68,7 @@ public class CarHUD : MonoBehaviour
         gearScreen = root.Q<VisualElement>("gearscreen");
         upgrade5 = root.Q<VisualElement>("upgrade_5");
         upgrade6 = root.Q<VisualElement>("upgrade_6");
+        powerUpBar = root.Q<VisualElement>("up_bar");
         needleRpm = root.Q<VisualElement>("ponteiro_r");
         needleSpeed = root.Q<VisualElement>("ponteiro_v");
         speedLabel = root.Q<Label>("display_velocimetro");
@@ -87,6 +93,7 @@ public class CarHUD : MonoBehaviour
         UpdatePedal();
         UpdateNeedles(dt);
         UpdateGearScreen(dt);
+        UpdatePowerUpBar();
     }
 
     void UpdateGearScreen(float dt)
@@ -118,6 +125,19 @@ public class CarHUD : MonoBehaviour
                 ? gb.CurrentGear.ToString()
                 : "N";
         }
+    }
+
+    void UpdatePowerUpBar()
+    {
+        if (powerUpBar == null)
+            return;
+
+        int maxCharges = Mathf.Max(1, player.chargesToActivate);
+        float progress = Mathf.Clamp01((float)player.PowerUpCharges / maxCharges);
+        float barWidth = powerUpBarWidth > 0f ? powerUpBarWidth : 240f;
+        powerUpBar.style.width = barWidth;
+        powerUpBar.style.scale = new StyleScale(
+            new Scale(new Vector3(progress, 1f, 1f)));
     }
 
     // 5ª e 6ª aparecem conforme o carro
@@ -183,7 +203,7 @@ public class CarHUD : MonoBehaviour
 
         float rpmT = Mathf.InverseLerp(0f, gb.limiterRpm, gb.Rpm);
         rpmAngle = Mathf.Lerp(rpmAngle, Mathf.Lerp(rpmMinAngle, rpmMaxAngle, rpmT), k);
-        SetRotation(needleRpm, rpmAngle);
+        SetRotation(needleRpm, rpmAngle + rpmNeedleAngleOffset);
 
         float kmh = Mathf.Abs(player.CurrentSpeed) * 3.6f;
         float speedT = Mathf.InverseLerp(0f, maxSpeedKmh, kmh);

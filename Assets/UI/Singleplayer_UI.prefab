@@ -89,6 +89,7 @@ MonoBehaviour:
   knobSmoothing: 30
   rpmMinAngle: -120
   rpmMaxAngle: 120
+  rpmNeedleAngleOffset: -5
   maxSpeedKmh: 160
   speedMinAngle: -120
   speedMaxAngle: 120
