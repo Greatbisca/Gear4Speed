@@ -17,6 +17,9 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] Slider volumeSlider;
     [SerializeField] Toggle fullscreenToggle;
 
+    [Header("Freeze these while paused (drag the components, not the objects)")]
+    [SerializeField] Behaviour[] disableWhilePaused;
+
     [Header("Scenes")]
     [SerializeField] string menuScene = "MainMenu";
 
@@ -28,8 +31,8 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1f;
         AudioListener.pause = false;
 
-        pausePanel.SetActive(false);
-        optionsPanel.SetActive(false);
+        if (pausePanel != null) pausePanel.SetActive(false);
+        if (optionsPanel != null) optionsPanel.SetActive(false);
 
         float v = PlayerPrefs.GetFloat(VolumeKey, 1f);
         AudioListener.volume = v;
@@ -57,6 +60,7 @@ public class PauseMenu : MonoBehaviour
 
     void Update()
     {
+        if (RaceManager.Countdown || RaceManager.Finished) return;
         bool toggle;
 #if ENABLE_INPUT_SYSTEM
         var kb = Keyboard.current;
@@ -67,17 +71,26 @@ public class PauseMenu : MonoBehaviour
         if (!toggle) return;
 
         if (!IsPaused) Pause();
-        else if (optionsPanel.activeSelf) CloseOptions();   // Esc inside options = back
+        else if (optionsPanel != null && optionsPanel.activeSelf) CloseOptions();
         else Resume();
+    }
+
+    void SetFrozen(bool frozen)
+    {
+        if (disableWhilePaused == null) return;
+        foreach (var b in disableWhilePaused)
+            if (b != null) b.enabled = !frozen;
     }
 
     public void Pause()
     {
+        Debug.Log("PAUSE called");
         IsPaused = true;
         Time.timeScale = 0f;
         AudioListener.pause = true;     // engine sounds stop
-        pausePanel.SetActive(true);
-        optionsPanel.SetActive(false);
+        SetFrozen(true);
+        if (pausePanel != null) pausePanel.SetActive(true);
+        if (optionsPanel != null) optionsPanel.SetActive(false);
     }
 
     public void Resume()
@@ -85,8 +98,9 @@ public class PauseMenu : MonoBehaviour
         IsPaused = false;
         Time.timeScale = 1f;
         AudioListener.pause = false;
-        pausePanel.SetActive(false);
-        optionsPanel.SetActive(false);
+        SetFrozen(false);
+        if (pausePanel != null) pausePanel.SetActive(false);
+        if (optionsPanel != null) optionsPanel.SetActive(false);
     }
 
     public void Restart()
