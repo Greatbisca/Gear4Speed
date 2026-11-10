@@ -3522,6 +3522,7 @@ GameObject:
   m_Component:
   - component: {fileID: 427389265}
   - component: {fileID: 427389264}
+  - component: {fileID: 427389266}
   m_Layer: 0
   m_Name: RaceManager
   m_TagString: Untagged
@@ -3557,6 +3558,11 @@ MonoBehaviour:
   goTime: 0.8
   countColor: {r: 1, g: 0.67, b: 0.27, a: 1}
   goColor: {r: 0.3, g: 0.9, b: 0.3, a: 1}
+  countdownSound: {fileID: 8300000, guid: 26a542363d4de984b8ddb3624d81f73a, type: 3}
+  raceMusic: {fileID: 8300000, guid: bedb1af20eac588418f8cef4fb6fe240, type: 3}
+  raceMusicVolume: 0.7
+  raceMusicDelay: 0.5
+  raceMusicFadeIn: 1
   menuScene: MainMenu
 --- !u!4 &427389265
 Transform:
@@ -3573,6 +3579,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &427389266
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 427389263}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 0
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
 --- !u!1 &442117676
 GameObject:
   m_ObjectHideFlags: 0
