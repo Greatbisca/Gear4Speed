@@ -6,14 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
-    guid: ab13d6d733b5e474786001b8144ca8ed
-  - enabled: 1
     path: Assets/Scenes/CarSelect.unity
     guid: 49d06f65edff81c4c9874cef14e3ac49
   - enabled: 1
     path: Assets/Scenes/Main Scene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: acab20531736d2040af5e215827008b6
+  - enabled: 1
+    path: Assets/Scenes/Credits.unity
+    guid: ab13d6d733b5e474786001b8144ca8ed
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
