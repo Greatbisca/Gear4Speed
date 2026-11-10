@@ -57,6 +57,7 @@ public class RaceSplineFollower : MonoBehaviour
 
     // Direção de movimento no plano horizontal (com -90 em X o eulerAngles não dá o yaw)
     public Vector3 Heading { get; private set; } = Vector3.forward;
+    public int CurrentTurnDirection { get; private set; }
     public float Distance => distance;
     public float TotalDistance { get; private set; }
 
@@ -121,7 +122,7 @@ public class RaceSplineFollower : MonoBehaviour
         UpdateCornerLimit();
     }
 
-    void LateUpdate()
+    void Update()
     {
         if (!initialized || target == null || path.TotalLength <= 0f)
             return;
@@ -359,6 +360,8 @@ public class RaceSplineFollower : MonoBehaviour
             return;
         flat.Normalize();
         Heading = flat;
+        CurrentTurnDirection = GetTurnDirection(okBack, back, okFront, front,
+                                                tangent);
 
         // Faixa: perpendicular à direção real
         Vector3 right = Vector3.Cross(Vector3.up, flat);
@@ -375,5 +378,28 @@ public class RaceSplineFollower : MonoBehaviour
         target.SetPositionAndRotation(
             position,
             currentYaw * Quaternion.Euler(rotationOffset));
+    }
+
+    int GetTurnDirection(bool okBack, Vector3 back, bool okFront,
+                         Vector3 front, Vector3 tangent)
+    {
+        if (CurrentSegment == null || !CurrentSegment.IsCorner)
+            return 0;
+
+        Vector3 current = Vector3.ProjectOnPlane(
+            okBack && okFront ? front - back : tangent, Vector3.up);
+        if (current.sqrMagnitude < 0.0001f)
+            return 0;
+
+        bool okNext = path.Evaluate(
+            Mathf.Repeat(distance + Mathf.Max(1f, lookDistance * 2f),
+                path.TotalLength),
+            0f, out _, out Vector3 nextTangent, out _);
+        Vector3 next = Vector3.ProjectOnPlane(nextTangent, Vector3.up);
+        if (!okNext || next.sqrMagnitude < 0.0001f)
+            return 0;
+
+        float cross = Vector3.Cross(current.normalized, next.normalized).y;
+        return Mathf.Abs(cross) > 0.001f ? (cross > 0f ? 1 : -1) : 0;
     }
 }

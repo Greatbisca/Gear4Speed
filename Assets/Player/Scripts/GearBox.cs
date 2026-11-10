@@ -181,8 +181,8 @@ public class Gearbox : MonoBehaviour
     public void Stall()
     {
         EngineRunning = false;
-        CurrentGear = 0;
-        targetGear = 0;
+        CurrentGear = Mathf.Min(4, GearCount);
+        targetGear = CurrentGear;
         InClutch = false;
         GearSelected = false;
         Rpm = 0f;

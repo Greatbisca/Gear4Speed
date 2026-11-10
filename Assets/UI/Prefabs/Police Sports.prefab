@@ -195,7 +195,7 @@ GameObject:
   - component: {fileID: -2145746160127050984}
   - component: {fileID: -2813628175868052925}
   m_Layer: 0
-  m_Name: PoliceSports
+  m_Name: Police Sports
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -40,7 +40,11 @@ public class EngineSound : MonoBehaviour
 
     void Awake()
     {
-        source = GetComponent<AudioSource>();
+        AudioSource existing = GetComponent<AudioSource>();
+        GameObject audioObject = new GameObject("Engine Audio");
+        audioObject.transform.SetParent(transform, false);
+        source = audioObject.AddComponent<AudioSource>();
+        CopyAudioSettings(existing, source);
         source.clip = engineLoop;
         source.loop = true;
         source.playOnAwake = false;
@@ -49,6 +53,10 @@ public class EngineSound : MonoBehaviour
         source.rolloffMode = AudioRolloffMode.Linear;
         source.minDistance = minDistance;
         source.maxDistance = maxDistance;
+
+        existing.Stop();
+        existing.playOnAwake = false;
+        existing.clip = null;
 
         speedSource = GetComponentInParent<ISpeedSource>();
 
@@ -65,19 +73,43 @@ public class EngineSound : MonoBehaviour
         }
     }
 
+    static void CopyAudioSettings(AudioSource from, AudioSource to)
+    {
+        to.outputAudioMixerGroup = from.outputAudioMixerGroup;
+        to.mute = from.mute;
+        to.bypassEffects = from.bypassEffects;
+        to.bypassListenerEffects = from.bypassListenerEffects;
+        to.bypassReverbZones = from.bypassReverbZones;
+        to.priority = from.priority;
+        to.panStereo = from.panStereo;
+        to.spatialBlend = from.spatialBlend;
+        to.reverbZoneMix = from.reverbZoneMix;
+        to.dopplerLevel = from.dopplerLevel;
+        to.rolloffMode = from.rolloffMode;
+        to.minDistance = from.minDistance;
+        to.maxDistance = from.maxDistance;
+    }
+
     void Start()
     {
         currentRpm = idleRpm;
-        if (engineLoop != null) source.Play();
+        if (engineLoop != null)
+            source.Play();
     }
 
     public void Configure(CarStats stats)
     {
         if (stats == null) return;
+        source.spatialBlend = 1f;
+        source.dopplerLevel = 0f;
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.minDistance = minDistance;
+        source.maxDistance = maxDistance;
         if (stats.engineSound != null)
         {
             engineLoop = stats.engineSound;
             source.clip = engineLoop;
+            source.loop = true;
             if (!source.isPlaying && engineLoop != null)
                 source.Play();
         }
