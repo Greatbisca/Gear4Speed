@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     [SerializeField] string carSelectScene = "CarSelect";
+    [SerializeField] string creditsScene = "Credits";
     [SerializeField] GameObject quitButton;   // hidden in the web build
 
     void Awake()
@@ -13,6 +14,8 @@ public class MainMenu : MonoBehaviour
     }
 
     public void Play() => SceneManager.LoadScene(carSelectScene);
+
+    public void Credits() => SceneManager.LoadScene(creditsScene);
 
     public void Quit()
     {
