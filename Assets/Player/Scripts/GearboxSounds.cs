@@ -40,6 +40,7 @@ public class GearboxSounds : MonoBehaviour
         if (gearbox == null) return;
         gearbox.ClutchPressed += OnClutchPressed;
         gearbox.GearPicked += OnGearPicked;
+        gearbox.NeutralMoved += OnNeutralMoved;
         gearbox.Shifted += OnShifted;
     }
 
@@ -48,6 +49,7 @@ public class GearboxSounds : MonoBehaviour
         if (gearbox == null) return;
         gearbox.ClutchPressed -= OnClutchPressed;
         gearbox.GearPicked -= OnGearPicked;
+        gearbox.NeutralMoved -= OnNeutralMoved;
         gearbox.Shifted -= OnShifted;
     }
 
@@ -55,8 +57,9 @@ public class GearboxSounds : MonoBehaviour
 
     void OnGearPicked(int dir) => Play(dir > 0 ? gearUp : gearDown);
 
-    // Chama isto quando a mecânica de neutro para neutro existir
-    public void PlayNeutralToNeutral() => Play(neutralToNeutral);
+    void OnNeutralMoved() => Play(neutralToNeutral);
+
+    public void PlayNeutralToNeutral() => OnNeutralMoved();
 
     void OnShifted(ShiftZone zone)
     {

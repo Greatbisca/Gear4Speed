@@ -40,6 +40,10 @@ public class Gearbox : MonoBehaviour
     public float powerRpm = 1500f;           // full power from here upwards
     [Range(0f, 1f)] public float lugFactor = 0.25f;
 
+    [Header("Launch (1st gear)")]
+    [Tooltip("Fraction of power available from standstill in 1st gear. Higher = sharper launch.")]
+    [Range(0f, 1f)] public float firstGearLugFactor = 0.85f;
+
     [Header("Counter-rotation: upshift (needle falls)")]
     public float zoneMinRpm = 2000f;
     public float zoneMaxRpm = 3000f;
@@ -50,7 +54,9 @@ public class Gearbox : MonoBehaviour
 
     [Header("Counter-rotation: shared")]
     public float zoneLead = 500f;            // how far ahead of the needle the zone appears
+    [Tooltip("Half width of the green (perfect) zone, in RPM. Scaled per car by SetShiftTolerance.")]
     public float greenHalfWidth = 100f;
+    [Tooltip("Half width of the yellow zone, in RPM. Scaled per car by SetShiftTolerance.")]
     public float yellowHalfWidth = 250f;
     public float fallRate = 400f;            // RPM per second while the needle moves
     [Min(1f)]
@@ -81,16 +87,28 @@ public class Gearbox : MonoBehaviour
     int shiftDir;
     GearSetting[] defaultGears;
 
+    // Inspector values of the zone widths, kept so SetShiftTolerance never compounds
+    float baseGreenHalfWidth;
+    float baseYellowHalfWidth;
+
     GearSetting Current => gears[Mathf.Clamp(CurrentGear - 1, 0, gears.Length - 1)];
     public int GearCount => gears.Length;
     float SpeedPerRpm => Current.maxSpeed / limiterRpm;
 
     public float MaxSpeed => CurrentGear == 0 ? 0f : Current.maxSpeed;
-    public float Acceleration =>
-        EngineRunning && CurrentGear > 0
-            ? Current.acceleration * Mathf.Lerp(
-                lugFactor, 1f, Mathf.InverseLerp(idleRpm, powerRpm, Rpm))
-            : 0f;
+
+    // 1st gear uses firstGearLugFactor, so the car launches hard from standstill
+    public float Acceleration
+    {
+        get
+        {
+            if (!EngineRunning || CurrentGear <= 0) return 0f;
+
+            float lug = CurrentGear == 1 ? firstGearLugFactor : lugFactor;
+            return Current.acceleration *
+                   Mathf.Lerp(lug, 1f, Mathf.InverseLerp(idleRpm, powerRpm, Rpm));
+        }
+    }
 
     // 0 = no prompt, otherwise the gear the player should shift to
     public int PromptGear
@@ -105,6 +123,8 @@ public class Gearbox : MonoBehaviour
     }
     public bool ShiftPromptActive => PromptGear != 0;
     public int NextGear => PromptGear;
+
+    // Zone predicted when the clutch is pressed, before a gear is picked
     public float PreviewZoneCenter
     {
         get
@@ -121,7 +141,33 @@ public class Gearbox : MonoBehaviour
                     downZoneMinRpm + yellowHalfWidth, downZoneMaxRpm - yellowHalfWidth);
         }
     }
-    void Awake() => defaultGears = CloneGears(gears);
+
+    void Awake()
+    {
+        defaultGears = CloneGears(gears);
+        baseGreenHalfWidth = greenHalfWidth;
+        baseYellowHalfWidth = yellowHalfWidth;
+    }
+
+    // --- Per-car shift tolerance ---
+
+    // 1 = Inspector values. 1.5 = zones 50% wider. Called by CarSpawner.
+    public void SetShiftTolerance(float multiplier)
+    {
+        if (baseGreenHalfWidth <= 0f) baseGreenHalfWidth = greenHalfWidth;
+        if (baseYellowHalfWidth <= 0f) baseYellowHalfWidth = yellowHalfWidth;
+
+        multiplier = Mathf.Max(0.25f, multiplier);
+
+        // The zone centre is clamped to [zoneMin + yellow, zoneMax - yellow].
+        // If yellow passed half the window the clamp would invert and the zone would stop varying.
+        float maxYellow = Mathf.Min(zoneMaxRpm - zoneMinRpm,
+                                    downZoneMaxRpm - downZoneMinRpm) * 0.5f - 1f;
+
+        yellowHalfWidth = Mathf.Min(baseYellowHalfWidth * multiplier, maxYellow);
+        greenHalfWidth = Mathf.Max(10f,
+            Mathf.Min(baseGreenHalfWidth * multiplier, yellowHalfWidth - 25f));
+    }
 
     // --- Per-car gear sets ---
     static GearSetting[] CloneGears(GearSetting[] src)
@@ -151,6 +197,7 @@ public class Gearbox : MonoBehaviour
     public void ResetToDefault()
     {
         if (defaultGears != null) gears = CloneGears(defaultGears);
+        SetShiftTolerance(1f);
         ResetState();
     }
 
@@ -295,9 +342,12 @@ public class Gearbox : MonoBehaviour
         // released in neutral or in the same gear: no shift
         if (!GearSelected) { Shifted?.Invoke(ShiftZone.None); return; }
 
-        ShiftZone zone = ZoneFor(Rpm);
+        // Restarting a stalled engine in 1st is not a real shift: no zone, no bonus
+        bool restarting = !EngineRunning && targetGear == 1;
+
+        ShiftZone zone = restarting ? ShiftZone.None : ZoneFor(Rpm);
         CurrentGear = targetGear;
-        if (!EngineRunning && CurrentGear == 1)
+        if (restarting)
         {
             EngineRunning = true;
             Rpm = idleRpm;
@@ -328,7 +378,8 @@ public class Gearbox : MonoBehaviour
         left    = Input.GetKeyDown(KeyCode.LeftArrow);
         right   = Input.GetKeyDown(KeyCode.RightArrow);
 #endif
-        if (!EngineRunning) return;
+        // No early return when the engine is stalled, so the player can
+        // press the clutch, pick 1st and release to restart it.
         if (press) PressClutch();
         if (up) MoveStick(0, +1);
         if (down) MoveStick(0, -1);

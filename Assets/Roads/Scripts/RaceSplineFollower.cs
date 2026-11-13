@@ -57,6 +57,7 @@ public class RaceSplineFollower : MonoBehaviour
 
     // Direção de movimento no plano horizontal (com -90 em X o eulerAngles não dá o yaw)
     public Vector3 Heading { get; private set; } = Vector3.forward;
+    public int CurrentTurnDirection { get; private set; }
     public float Distance => distance;
     public float TotalDistance { get; private set; }
 
@@ -121,7 +122,7 @@ public class RaceSplineFollower : MonoBehaviour
         UpdateCornerLimit();
     }
 
-    void LateUpdate()
+    void Update()
     {
         if (!initialized || target == null || path.TotalLength <= 0f)
             return;
@@ -152,12 +153,33 @@ public class RaceSplineFollower : MonoBehaviour
         }
     }
 
-    float BogFraction => player != null ? player.engineBogSpeedFraction : 0.2f;
+    float BogFraction => player != null ? player.engineBogSpeedFraction : 0.26f;
 
     float GetHandling()
     {
         CarStats stats = spawner != null ? spawner.CurrentStats : null;
         return stats != null ? Mathf.Clamp01(stats.handling) : defaultHandling;
+    }
+
+    // Mudanças do jogador (Gearbox) ou, na IA, as do CarStats
+    Gearbox.GearSetting[] GearSet
+    {
+        get
+        {
+            Gearbox gb = Gb;
+            if (gb != null && gb.gears != null && gb.gears.Length > 1) return gb.gears;
+            CarStats st = spawner != null ? spawner.CurrentStats : null;
+            return st != null && st.gears != null && st.gears.Length > 1 ? st.gears : null;
+        }
+    }
+
+    float FallbackMaxKmh
+    {
+        get
+        {
+            CarStats st = spawner != null ? spawner.CurrentStats : null;
+            return st != null && st.maxSpeed > 0f ? st.maxSpeed : fallbackMaxSpeedKmh;
+        }
     }
 
     // Velocidade abaixo da qual a mudança g (1-based) pede redução
@@ -190,6 +212,7 @@ public class RaceSplineFollower : MonoBehaviour
     }
 
     // Velocidade alvo, travagem e mudança final para uma curva que exige 'drop' reduções
+    // Velocidade alvo, travagem e mudança final para uma curva que exige 'drop' reduções
     bool PlanForDrop(int drop, float handling, float speedMultiplier,
                      out float targetSpeed, out float decel, out int forcedGear)
     {
@@ -199,33 +222,39 @@ public class RaceSplineFollower : MonoBehaviour
         if (drop <= 0) return false;
 
         Gearbox gb = Gb;
-        if (gb == null || gb.GearCount < 2)
+        Gearbox.GearSetting[] set = GearSet;
+
+        if (set == null)
         {
-            // Sem caixa de velocidades (IA): velocidade proporcional ao handling
-            float maxMs = fallbackMaxSpeedKmh / 3.6f;
+            // Sem mudanças conhecidas: velocidade proporcional ao handling
+            float maxMs = FallbackMaxKmh / 3.6f;
             targetSpeed = Mathf.Max(minCornerSpeedMs,
                 maxMs * Mathf.Lerp(0.2f, 0.45f, handling) * speedMultiplier);
             decel = fallbackBrakeDecel;
             return true;
         }
 
-        int top = gb.GearCount;
+        // Constantes da caixa (se não houver Gearbox, os valores por defeito)
+        float promptFrac = gb != null ? gb.downshiftPromptRpm / Mathf.Max(1f, gb.limiterRpm) : 0.3f;
+        float limiter = gb != null ? Mathf.Max(1f, gb.limiterRpm) : 4000f;
+        float zoneRpm = gb != null ? Mathf.Max(100f, gb.downZoneMaxRpm - gb.downZoneMinRpm) : 1200f;
+
+        int top = set.Length;
         int f = Mathf.Clamp(top - drop, 1, top - 1);   // mudança máxima permitida na curva
         forcedGear = f;
 
         // Janela: confortável na mudança f (lower) mas já a engasgar na f+1 (upper)
-        float lower = f > 1 ? PromptSpeed(gb, f) : gb.gears[0].maxSpeed * 0.2f;
-        float upper = BogSpeed(gb, f + 1) * 0.95f;
+        float lower = f > 1 ? set[f - 1].maxSpeed * promptFrac : set[0].maxSpeed * 0.2f;
+        float upper = set[f].maxSpeed * BogFraction * 0.95f;
 
         if (upper <= lower && !warnedWindow)
         {
             warnedWindow = true;
-            float needed = lower * 1.2f / gb.gears[f].maxSpeed;
-            float promptFraction = gb.downshiftPromptRpm / gb.limiterRpm;
+            float needed = lower * 1.2f / set[f].maxSpeed;
             Debug.LogWarning(
                 $"{name}: não há janela entre a mudança {f} e a {f + 1} (a {f + 1}ª engasga a " +
-                $"{BogSpeed(gb, f + 1):F1} m/s, a {f}ª só está confortável a partir de {lower:F1} m/s). " +
-                $"Põe engineBogSpeedFraction entre {needed:F2} e {promptFraction:F2} no PlayerController, " +
+                $"{set[f].maxSpeed * BogFraction:F1} m/s, a {f}ª só está confortável a partir de {lower:F1} m/s). " +
+                $"Põe engineBogSpeedFraction entre {needed:F2} e {promptFrac:F2}, " +
                 $"ou afasta mais as velocidades máximas das mudanças.", this);
         }
 
@@ -234,8 +263,7 @@ public class RaceSplineFollower : MonoBehaviour
         targetSpeed = Mathf.Max(minCornerSpeedMs, targetSpeed * speedMultiplier);
 
         // Travagem: a largura da janela de redução da mudança f dividida pelo tempo para trocar
-        float windowRpm = Mathf.Max(100f, gb.downZoneMaxRpm - gb.downZoneMinRpm);
-        float windowSpeed = gb.gears[f - 1].maxSpeed * windowRpm / gb.limiterRpm;
+        float windowSpeed = set[f - 1].maxSpeed * zoneRpm / limiter;
         decel = Mathf.Clamp(windowSpeed / Mathf.Max(0.1f, shiftTimeBudget), minBrakeDecel, maxBrakeDecel);
         return true;
     }
@@ -359,6 +387,8 @@ public class RaceSplineFollower : MonoBehaviour
             return;
         flat.Normalize();
         Heading = flat;
+        CurrentTurnDirection = GetTurnDirection(okBack, back, okFront, front,
+                                                tangent);
 
         // Faixa: perpendicular à direção real
         Vector3 right = Vector3.Cross(Vector3.up, flat);
@@ -375,5 +405,28 @@ public class RaceSplineFollower : MonoBehaviour
         target.SetPositionAndRotation(
             position,
             currentYaw * Quaternion.Euler(rotationOffset));
+    }
+
+    int GetTurnDirection(bool okBack, Vector3 back, bool okFront,
+                         Vector3 front, Vector3 tangent)
+    {
+        if (CurrentSegment == null || !CurrentSegment.IsCorner)
+            return 0;
+
+        Vector3 current = Vector3.ProjectOnPlane(
+            okBack && okFront ? front - back : tangent, Vector3.up);
+        if (current.sqrMagnitude < 0.0001f)
+            return 0;
+
+        bool okNext = path.Evaluate(
+            Mathf.Repeat(distance + Mathf.Max(1f, lookDistance * 2f),
+                path.TotalLength),
+            0f, out _, out Vector3 nextTangent, out _);
+        Vector3 next = Vector3.ProjectOnPlane(nextTangent, Vector3.up);
+        if (!okNext || next.sqrMagnitude < 0.0001f)
+            return 0;
+
+        float cross = Vector3.Cross(current.normalized, next.normalized).y;
+        return Mathf.Abs(cross) > 0.001f ? (cross > 0f ? 1 : -1) : 0;
     }
 }

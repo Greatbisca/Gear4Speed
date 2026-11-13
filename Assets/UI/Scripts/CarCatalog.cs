@@ -13,6 +13,9 @@ public class CarCatalog : ScriptableObject
         public float topSpeed = 180f;
         public float acceleration = 4f;
         [Range(0f, 1f)] public float handling = 0.5f;
+        [Range(0.5f, 2.5f)]
+        [Tooltip("Largura da zona verde/amarela da mudança perfeita. 1 = normal, 1.5 = 50% mais larga.")]
+        public float shiftTolerance = 1f;
         public CarPowerUp powerUp = CarPowerUp.None;
         [Min(0f)] public float powerUpChargeRequired = 100f;
         public AudioClip engineSound;
@@ -32,6 +35,7 @@ public class CarCatalog : ScriptableObject
         public float TopSpeed => topSpeed;
         public float Acceleration => acceleration;
         public float Handling => handling;
+        public float ShiftTolerance => shiftTolerance;
     }
 
     public Entry[] cars;

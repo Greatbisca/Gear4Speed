@@ -6,13 +6,21 @@ public class AIController : MonoBehaviour, ISpeedSource
     public Map_Gen map;
     public PlayerController player;      // used only to stay inside the generated tiles
     public RaceSplineFollower splineFollower;
+    public CarSpawner spawner;
 
-    [Header("Speed (m/s)")]
+    [Header("Speed (m/s) - modo tiles / sem stats")]
     public float cruiseSpeed = 12f;
     public bool slowInCorners = true;
     public float cornerSpeed = 8f;
     public float accel = 4f;
     public float brake = 8f;
+
+    [Header("Stats do carro (modo spline)")]
+    [Range(0.5f, 1.2f)]
+    [Tooltip("Fração da velocidade máxima do carro que a IA usa. <1 deixa o jogador ganhar a direito.")]
+    public float speedFactor = 0.95f;
+    [Tooltip("m/s² por cada ponto do stat 'acceleration'. O jogador acelera mais na 1ª e menos nas altas.")]
+    public float accelPerStat = 0.55f;
 
     [Header("Road")]
     public float heightOffset = 0.5f;
@@ -28,10 +36,14 @@ public class AIController : MonoBehaviour, ISpeedSource
     {
         if (map == null) map = FindFirstObjectByType<Map_Gen>();
         if (player == null) player = FindFirstObjectByType<PlayerController>();
-        if (splineFollower == null)
-            splineFollower = GetComponent<RaceSplineFollower>()
-                ?? GetComponentInParent<RaceSplineFollower>()
-                ?? GetComponentInChildren<RaceSplineFollower>();
+
+        if (splineFollower == null) splineFollower = GetComponent<RaceSplineFollower>();
+        if (splineFollower == null) splineFollower = GetComponentInChildren<RaceSplineFollower>();
+        if (splineFollower == null) splineFollower = GetComponentInParent<RaceSplineFollower>();
+
+        if (spawner == null) spawner = GetComponent<CarSpawner>();
+        if (spawner == null) spawner = GetComponentInChildren<CarSpawner>();
+        if (spawner == null) spawner = GetComponentInParent<CarSpawner>();
     }
 
     void Start()
@@ -72,11 +84,23 @@ public class AIController : MonoBehaviour, ISpeedSource
 
     void UpdateSplineSpeed()
     {
-        float target = cruiseSpeed;
+        CarStats stats = spawner != null ? spawner.CurrentStats : null;
+
+        float topSpeed = stats != null && stats.maxSpeed > 0f
+            ? stats.maxSpeed / 3.6f * speedFactor
+            : cruiseSpeed;
+        float acceleration = stats != null && stats.acceleration > 0f
+            ? stats.acceleration * accelPerStat
+            : accel;
+
+        float target = topSpeed;
         if (splineFollower.CurrentSpeedLimitMs < float.PositiveInfinity)
             target = Mathf.Min(target, splineFollower.CurrentSpeedLimitMs);
 
-        float rate = CurrentSpeed > target ? brake : accel;
+        float rate = CurrentSpeed > target
+            ? Mathf.Max(brake, splineFollower.CurrentCornerBrakeDeceleration)
+            : acceleration;
+
         CurrentSpeed = Mathf.MoveTowards(
             CurrentSpeed,
             Mathf.Max(0f, target),

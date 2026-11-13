@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(AudioSource))]
 public class RaceManager : MonoBehaviour
 {
     public static bool Countdown { get; private set; }
@@ -33,6 +34,13 @@ public class RaceManager : MonoBehaviour
     [SerializeField] Color countColor = new Color(1f, .67f, .27f);
     [SerializeField] Color goColor = new Color(.3f, .9f, .3f);
 
+    [Header("Race audio")]
+    [SerializeField] AudioClip countdownSound;
+    [SerializeField] AudioClip raceMusic;
+    [SerializeField] float raceMusicVolume = 0.7f;
+    [SerializeField] float raceMusicDelay = 0.5f;
+    [SerializeField] float raceMusicFadeIn = 1f;
+
     [Header("Scenes")]
     [SerializeField] string menuScene = "MainMenu";
 
@@ -48,11 +56,25 @@ public class RaceManager : MonoBehaviour
 
     readonly List<Racer> racers = new List<Racer>();
     Racer playerRacer;
+    AudioSource raceAudio;
+    AudioSource raceMusicAudio;
     float raceTime, nextTrack;
     int finishedCount;
 
     void Awake()
     {
+        raceAudio = GetComponent<AudioSource>();
+        raceAudio.playOnAwake = false;
+        raceAudio.loop = false;
+        raceAudio.spatialBlend = 0f;
+        raceAudio.ignoreListenerPause = true;
+        GameObject musicObject = new GameObject("Race Music Audio");
+        musicObject.transform.SetParent(transform, false);
+        raceMusicAudio = musicObject.AddComponent<AudioSource>();
+        raceMusicAudio.playOnAwake = false;
+        raceMusicAudio.loop = true;
+        raceMusicAudio.spatialBlend = 0f;
+        raceMusicAudio.ignoreListenerPause = true;
         Countdown = RaceActive = Finished = false;
         if (countdownText != null) countdownText.gameObject.SetActive(false);
         if (resultsPanel != null) resultsPanel.SetActive(false);
@@ -63,6 +85,8 @@ public class RaceManager : MonoBehaviour
 
     void OnDestroy()
     {
+        if (raceAudio != null) raceAudio.Stop();
+        if (raceMusicAudio != null) raceMusicAudio.Stop();
         Countdown = RaceActive = Finished = false;
         Time.timeScale = 1f;
     }
@@ -75,6 +99,7 @@ public class RaceManager : MonoBehaviour
         yield return null;                // let the cars be placed on the grid first
         yield return null;
         Setup();
+        PlayCountdownSound();
 
         for (int n = startFrom; n >= 1; n--)
         {
@@ -86,8 +111,43 @@ public class RaceManager : MonoBehaviour
         Time.timeScale = 1f;
         Countdown = false;
         RaceActive = true;
+        StartCoroutine(PlayRaceMusicDelayed());
         yield return Pop(goTime);
         if (countdownText != null) countdownText.gameObject.SetActive(false);
+    }
+
+    void PlayCountdownSound()
+    {
+        if (countdownSound == null) return;
+        raceAudio.Stop();
+        raceAudio.loop = false;
+        raceAudio.clip = countdownSound;
+        raceAudio.volume = 1f;
+        raceAudio.Play();
+    }
+
+    IEnumerator PlayRaceMusicDelayed()
+    {
+        if (raceMusicAudio == null || raceMusic == null) yield break;
+        raceMusicAudio.Stop();
+        raceMusicAudio.volume = 0f;
+        if (raceMusicDelay > 0f)
+            yield return new WaitForSecondsRealtime(raceMusicDelay);
+
+        raceMusicAudio.clip = raceMusic;
+        raceMusicAudio.Play();
+
+        float targetVolume = raceMusicVolume * GameAudio.Music;
+        float elapsed = 0f;
+        float fadeDuration = Mathf.Max(0f, raceMusicFadeIn);
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            raceMusicAudio.volume = Mathf.Lerp(0f, targetVolume, elapsed / fadeDuration);
+            yield return null;
+        }
+
+        raceMusicAudio.volume = targetVolume;
     }
 
     void Show(string s, Color c)
