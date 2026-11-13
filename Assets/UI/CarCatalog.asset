@@ -16,8 +16,8 @@ MonoBehaviour:
   - displayName: Muscle
     prefab: {fileID: 3934580097146141252, guid: 1139528e1debd8a46a67326bc1bf3750, type: 3}
     topSpeed: 180
-    acceleration: 6
-    handling: 0.6
+    acceleration: 7
+    handling: 0.58
     powerUp: 0
     powerUpChargeRequired: 100
     engineSound: {fileID: 0}
@@ -52,7 +52,7 @@ MonoBehaviour:
   - displayName: Limousine
     prefab: {fileID: 5735587570834646552, guid: fe67b5dcd70b215498594d4e860517ae, type: 3}
     topSpeed: 160
-    acceleration: 4
+    acceleration: 4.2
     handling: 0.35
     powerUp: 0
     powerUpChargeRequired: 100
@@ -87,8 +87,8 @@ MonoBehaviour:
       rpmDecrease: 400
   - displayName: Taxi
     prefab: {fileID: 6724002299949844611, guid: 911501f5494e0324e934001cdc09d7ba, type: 3}
-    topSpeed: 140
-    acceleration: 4.5
+    topSpeed: 145
+    acceleration: 5.2
     handling: 0.3
     powerUp: 0
     powerUpChargeRequired: 100
@@ -123,9 +123,9 @@ MonoBehaviour:
       rpmDecrease: 400
   - displayName: Muscly
     prefab: {fileID: 440696153101128223, guid: 7dd75cc1e073736499319dd0e119c8e8, type: 3}
-    topSpeed: 200
-    acceleration: 6
-    handling: 0.55
+    topSpeed: 205
+    acceleration: 6.5
+    handling: 0.5
     powerUp: 0
     powerUpChargeRequired: 100
     engineSound: {fileID: 0}
@@ -160,44 +160,8 @@ MonoBehaviour:
   - displayName: Ambulance
     prefab: {fileID: 2242297688324592613, guid: 48a5e231d8a7c5a4cbfc8ce1f5a74e8b, type: 3}
     topSpeed: 165
-    acceleration: 5
+    acceleration: 5.5
     handling: 0.4
-    powerUp: 0
-    powerUpChargeRequired: 100
-    engineSound: {fileID: 0}
-    maxRpm: 4000
-    rpmIncrease: 400
-    rpmDecrease: 400
-    gears:
-    - name: 1st
-      maxSpeed: 12
-      acceleration: 4
-      gearRatio: 3.5
-      rpmIncrease: 400
-      rpmDecrease: 400
-    - name: 2nd
-      maxSpeed: 18
-      acceleration: 3.5
-      gearRatio: 2.1
-      rpmIncrease: 400
-      rpmDecrease: 400
-    - name: 3rd
-      maxSpeed: 27
-      acceleration: 3
-      gearRatio: 1.4
-      rpmIncrease: 400
-      rpmDecrease: 400
-    - name: 4th
-      maxSpeed: 40.5
-      acceleration: 2.5
-      gearRatio: 1
-      rpmIncrease: 400
-      rpmDecrease: 400
-  - displayName: Police Muscle
-    prefab: {fileID: 961447582297428151, guid: f6838d7add656af40aded8f7bb982e84, type: 3}
-    topSpeed: 205
-    acceleration: 6.2
-    handling: 0.55
     powerUp: 0
     powerUpChargeRequired: 100
     engineSound: {fileID: 0}
@@ -231,45 +195,9 @@ MonoBehaviour:
       rpmDecrease: 400
   - displayName: Police Sedan
     prefab: {fileID: 1990686775432796063, guid: 6f6eb58784d63b54bb8f0ad3bb052d9c, type: 3}
-    topSpeed: 185
-    acceleration: 5.5
-    handling: 0.6
-    powerUp: 0
-    powerUpChargeRequired: 100
-    engineSound: {fileID: 0}
-    maxRpm: 4000
-    rpmIncrease: 400
-    rpmDecrease: 400
-    gears:
-    - name: 1st
-      maxSpeed: 12
-      acceleration: 4
-      gearRatio: 3.5
-      rpmIncrease: 400
-      rpmDecrease: 400
-    - name: 2nd
-      maxSpeed: 18
-      acceleration: 3.5
-      gearRatio: 2.1
-      rpmIncrease: 400
-      rpmDecrease: 400
-    - name: 3rd
-      maxSpeed: 27
-      acceleration: 3
-      gearRatio: 1.4
-      rpmIncrease: 400
-      rpmDecrease: 400
-    - name: 4th
-      maxSpeed: 40.5
-      acceleration: 2.5
-      gearRatio: 1
-      rpmIncrease: 400
-      rpmDecrease: 400
-  - displayName: Police Sports
-    prefab: {fileID: 4169279083259788355, guid: 1c8196c2b9dd2254e9f092933f49cdfe, type: 3}
-    topSpeed: 215
-    acceleration: 7
-    handling: 0.8
+    topSpeed: 190
+    acceleration: 5.8
+    handling: 0.62
     powerUp: 0
     powerUpChargeRequired: 100
     engineSound: {fileID: 0}
@@ -304,7 +232,7 @@ MonoBehaviour:
   - displayName: SUV
     prefab: {fileID: 5343738931851003015, guid: c64b12108a29bbc4986ff4c053a01013, type: 3}
     topSpeed: 175
-    acceleration: 5.2
+    acceleration: 5.8
     handling: 0.5
     powerUp: 0
     powerUpChargeRequired: 100
