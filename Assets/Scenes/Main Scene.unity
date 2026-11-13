@@ -5481,7 +5481,7 @@ MonoBehaviour:
   - {fileID: 1153111298}
   - {fileID: 683881857}
   - {fileID: 1695954181}
-  - {fileID: 0}
+  - {fileID: 574127546}
   - {fileID: 1857272280}
   - {fileID: 1496069644}
   - {fileID: 1192105158}
@@ -7471,7 +7471,7 @@ MonoBehaviour:
   chosenCarPrefab: {fileID: 0}
   randomPool: []
   catalog: {fileID: 0}
-  catalogIndex: -1
+  catalogIndex: 0
   carScale: 1
   rotationOffset: {x: 90, y: 0, z: 0}
   groundOffset: -0.3
@@ -10307,6 +10307,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3490954750374979181, guid: 1d47af51714f7774fb25b2afed9a6f34, type: 3}
   m_PrefabInstance: {fileID: 574127544}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &574127546 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2482779601292411707, guid: 1d47af51714f7774fb25b2afed9a6f34, type: 3}
+  m_PrefabInstance: {fileID: 574127544}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73ad9d97bd33fc8438c434c70cb656f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RaceSplineSegment
 --- !u!1001 &574324702
 PrefabInstance:
   m_ObjectHideFlags: 0
