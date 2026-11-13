@@ -18,3 +18,35 @@ MonoBehaviour:
     topSpeed: 0
     acceleration: 0
     handling: 0
+    shiftTolerance: 1
+    powerUp: 0
+    powerUpChargeRequired: 100
+    engineSound: {fileID: 0}
+    maxRpm: 4000
+    rpmIncrease: 400
+    rpmDecrease: 400
+    gears:
+    - name: 1st
+      maxSpeed: 12
+      acceleration: 4
+      gearRatio: 3.5
+      rpmIncrease: 400
+      rpmDecrease: 400
+    - name: 2nd
+      maxSpeed: 18
+      acceleration: 3.5
+      gearRatio: 2.1
+      rpmIncrease: 400
+      rpmDecrease: 400
+    - name: 3rd
+      maxSpeed: 27
+      acceleration: 3
+      gearRatio: 1.4
+      rpmIncrease: 400
+      rpmDecrease: 400
+    - name: 4th
+      maxSpeed: 40.5
+      acceleration: 2.5
+      gearRatio: 1
+      rpmIncrease: 400
+      rpmDecrease: 400
