@@ -28,7 +28,7 @@ public static class CarCatalogBalancer
         new Car("SUV",           190f, 6.0f, 0.60f, 4, 1.30f),
         new Car("Muscle",        170f, 8.5f, 0.45f, 4, 1.15f),
         new Car("Ambulance",     225f, 5.4f, 0.52f, 4, 1.20f),
-        new Car("Limousine",     245f, 5.4f, 0.32f, 4, 1.00f),
+        new Car("Sports",        250f, 8.2f, 0.28f, 6, 0.80f),
         new Car("Muscly",        225f, 7.0f, 0.38f, 5, 1.00f),
         new Car("Police Muscle", 215f, 8.2f, 0.33f, 5, 0.90f),
         new Car("Police Sports", 250f, 8.2f, 0.28f, 6, 0.80f),
