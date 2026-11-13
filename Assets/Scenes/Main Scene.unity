@@ -6838,6 +6838,7 @@ MonoBehaviour:
   limiterRpm: 4000
   powerRpm: 1500
   lugFactor: 0.25
+  firstGearLugFactor: 0.85
   zoneMinRpm: 2000
   zoneMaxRpm: 3000
   downZoneMinRpm: 1800
@@ -6896,9 +6897,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CarSpawner
   chosenCarPrefab: {fileID: 0}
   randomPool: []
+  catalog: {fileID: 0}
+  catalogIndex: -1
   carScale: 1
   rotationOffset: {x: 90, y: 0, z: 0}
   groundOffset: -0.3
+  useMenuSelection: 1
+  launchAccelPerStat: 1.15
+  firstGearBoost: 1.2
+  ratioExponent: 0.85
 --- !u!4 &419274670
 Transform:
   m_ObjectHideFlags: 0
@@ -7078,6 +7085,7 @@ GameObject:
   m_Component:
   - component: {fileID: 427389265}
   - component: {fileID: 427389264}
+  - component: {fileID: 427389266}
   m_Layer: 0
   m_Name: RaceManager
   m_TagString: Untagged
@@ -7113,6 +7121,11 @@ MonoBehaviour:
   goTime: 0.8
   countColor: {r: 1, g: 0.67, b: 0.27, a: 1}
   goColor: {r: 0.3, g: 0.9, b: 0.3, a: 1}
+  countdownSound: {fileID: 8300000, guid: 26a542363d4de984b8ddb3624d81f73a, type: 3}
+  raceMusic: {fileID: 8300000, guid: bedb1af20eac588418f8cef4fb6fe240, type: 3}
+  raceMusicVolume: 0.7
+  raceMusicDelay: 0.5
+  raceMusicFadeIn: 1
   menuScene: MainMenu
 --- !u!4 &427389265
 Transform:
@@ -7129,6 +7142,103 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &427389266
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 427389263}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &427450378
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11652,9 +11762,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CarSpawner
   chosenCarPrefab: {fileID: 0}
   randomPool: []
+  catalog: {fileID: 11400000, guid: f4007f1c4b43c454b9304a808921334b, type: 2}
+  catalogIndex: -1
   carScale: 1
   rotationOffset: {x: 90, y: 0, z: 0}
   groundOffset: -0.3
+  useMenuSelection: 1
+  launchAccelPerStat: 1.15
+  firstGearBoost: 1.2
+  ratioExponent: 0.85
 --- !u!114 &705069054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11824,11 +11940,14 @@ MonoBehaviour:
   map: {fileID: 0}
   player: {fileID: 0}
   splineFollower: {fileID: 0}
+  spawner: {fileID: 0}
   cruiseSpeed: 12
   slowInCorners: 1
   cornerSpeed: 8
   accel: 4
   brake: 8
+  speedFactor: 0.95
+  accelPerStat: 0.55
   heightOffset: 0.1
   lateralOffset: 1.5
   startTileOffset: 1
@@ -14490,6 +14609,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChaseTarget
   car: {fileID: 419274670}
+  follower: {fileID: 0}
   turnSmoothing: 0
   minMoveSpeed: 0.3
   startYaw: 0
