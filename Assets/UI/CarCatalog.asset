@@ -15,11 +15,11 @@ MonoBehaviour:
   cars:
   - displayName: Muscle
     prefab: {fileID: 3934580097146141252, guid: 1139528e1debd8a46a67326bc1bf3750, type: 3}
-    topSpeed: 180
-    acceleration: 7
-    handling: 0.58
-    shiftTolerance: 1
-    powerUp: 0
+    topSpeed: 170
+    acceleration: 8.5
+    handling: 0.45
+    shiftTolerance: 1.15
+    powerUp: 1
     powerUpChargeRequired: 100
     engineSound: {fileID: 0}
     maxRpm: 4000
@@ -27,36 +27,36 @@ MonoBehaviour:
     rpmDecrease: 400
     gears:
     - name: 1st
-      maxSpeed: 12
-      acceleration: 4
+      maxSpeed: 13.492064
+      acceleration: 11.73
       gearRatio: 3.5
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 2nd
-      maxSpeed: 18
-      acceleration: 3.5
+      maxSpeed: 22.486774
+      acceleration: 6.3320637
       gearRatio: 2.1
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 3rd
-      maxSpeed: 27
-      acceleration: 3
+      maxSpeed: 33.73016
+      acceleration: 4.4860873
       gearRatio: 1.4
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 4th
-      maxSpeed: 40.5
-      acceleration: 2.5
+      maxSpeed: 47.222225
+      acceleration: 3.3702252
       gearRatio: 1
       rpmIncrease: 400
       rpmDecrease: 400
   - displayName: Sports
     prefab: {fileID: 5735587570834646552, guid: fe67b5dcd70b215498594d4e860517ae, type: 3}
-    topSpeed: 160
-    acceleration: 4.2
-    handling: 0.35
-    shiftTolerance: 1
-    powerUp: 0
+    topSpeed: 245
+    acceleration: 8.2
+    handling: 0.32
+    shiftTolerance: 1.1
+    powerUp: 1
     powerUpChargeRequired: 100
     engineSound: {fileID: 0}
     maxRpm: 4000
@@ -64,36 +64,48 @@ MonoBehaviour:
     rpmDecrease: 400
     gears:
     - name: 1st
-      maxSpeed: 12
-      acceleration: 4
-      gearRatio: 3.5
+      maxSpeed: 14.832622
+      acceleration: 11.316
+      gearRatio: 3.9
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 2nd
-      maxSpeed: 18
-      acceleration: 3.5
-      gearRatio: 2.1
+      maxSpeed: 21.424898
+      acceleration: 6.8986793
+      gearRatio: 2.7
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 3rd
-      maxSpeed: 27
-      acceleration: 3
-      gearRatio: 1.4
+      maxSpeed: 29.665243
+      acceleration: 5.2316194
+      gearRatio: 1.95
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 4th
-      maxSpeed: 40.5
-      acceleration: 2.5
-      gearRatio: 1
+      maxSpeed: 39.894638
+      acceleration: 4.066957
+      gearRatio: 1.45
+      rpmIncrease: 400
+      rpmDecrease: 400
+    - name: 5th
+      maxSpeed: 52.588387
+      acceleration: 3.2158113
+      gearRatio: 1.1
+      rpmIncrease: 400
+      rpmDecrease: 400
+    - name: 6th
+      maxSpeed: 68.05556
+      acceleration: 2.582931
+      gearRatio: 0.85
       rpmIncrease: 400
       rpmDecrease: 400
   - displayName: Taxi
     prefab: {fileID: 6724002299949844611, guid: 911501f5494e0324e934001cdc09d7ba, type: 3}
-    topSpeed: 145
-    acceleration: 5.2
-    handling: 0.3
-    shiftTolerance: 1
-    powerUp: 0
+    topSpeed: 150
+    acceleration: 6.4
+    handling: 0.9
+    shiftTolerance: 1.6
+    powerUp: 1
     powerUpChargeRequired: 100
     engineSound: {fileID: 0}
     maxRpm: 4000
@@ -101,36 +113,36 @@ MonoBehaviour:
     rpmDecrease: 400
     gears:
     - name: 1st
-      maxSpeed: 12
-      acceleration: 4
+      maxSpeed: 11.904762
+      acceleration: 8.832001
       gearRatio: 3.5
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 2nd
-      maxSpeed: 18
-      acceleration: 3.5
+      maxSpeed: 19.84127
+      acceleration: 4.767672
       gearRatio: 2.1
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 3rd
-      maxSpeed: 27
-      acceleration: 3
+      maxSpeed: 29.761906
+      acceleration: 3.3777602
       gearRatio: 1.4
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 4th
-      maxSpeed: 40.5
-      acceleration: 2.5
+      maxSpeed: 41.666668
+      acceleration: 2.5375814
       gearRatio: 1
       rpmIncrease: 400
       rpmDecrease: 400
   - displayName: Muscly
     prefab: {fileID: 440696153101128223, guid: 7dd75cc1e073736499319dd0e119c8e8, type: 3}
-    topSpeed: 205
-    acceleration: 6.5
-    handling: 0.5
+    topSpeed: 225
+    acceleration: 7
+    handling: 0.38
     shiftTolerance: 1
-    powerUp: 0
+    powerUp: 1
     powerUpChargeRequired: 100
     engineSound: {fileID: 0}
     maxRpm: 4000
@@ -138,36 +150,42 @@ MonoBehaviour:
     rpmDecrease: 400
     gears:
     - name: 1st
-      maxSpeed: 12
-      acceleration: 4
-      gearRatio: 3.5
+      maxSpeed: 16.493055
+      acceleration: 9.660001
+      gearRatio: 3.6
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 2nd
-      maxSpeed: 18
-      acceleration: 3.5
-      gearRatio: 2.1
+      maxSpeed: 24.739582
+      acceleration: 5.7031965
+      gearRatio: 2.4
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 3rd
-      maxSpeed: 27
-      acceleration: 3
-      gearRatio: 1.4
+      maxSpeed: 34.926468
+      acceleration: 4.2542243
+      gearRatio: 1.7
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 4th
-      maxSpeed: 40.5
-      acceleration: 2.5
-      gearRatio: 1
+      maxSpeed: 47.5
+      acceleration: 3.2757616
+      gearRatio: 1.25
+      rpmIncrease: 400
+      rpmDecrease: 400
+    - name: 5th
+      maxSpeed: 62.5
+      acceleration: 2.594202
+      gearRatio: 0.95
       rpmIncrease: 400
       rpmDecrease: 400
   - displayName: Ambulance
     prefab: {fileID: 2242297688324592613, guid: 48a5e231d8a7c5a4cbfc8ce1f5a74e8b, type: 3}
-    topSpeed: 165
-    acceleration: 5.5
-    handling: 0.4
-    shiftTolerance: 1
-    powerUp: 0
+    topSpeed: 225
+    acceleration: 5.4
+    handling: 0.52
+    shiftTolerance: 1.2
+    powerUp: 1
     powerUpChargeRequired: 100
     engineSound: {fileID: 0}
     maxRpm: 4000
@@ -175,36 +193,36 @@ MonoBehaviour:
     rpmDecrease: 400
     gears:
     - name: 1st
-      maxSpeed: 12
-      acceleration: 4
+      maxSpeed: 17.857143
+      acceleration: 7.452
       gearRatio: 3.5
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 2nd
-      maxSpeed: 18
-      acceleration: 3.5
+      maxSpeed: 29.761906
+      acceleration: 4.022723
       gearRatio: 2.1
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 3rd
-      maxSpeed: 27
-      acceleration: 3
+      maxSpeed: 44.642857
+      acceleration: 2.8499851
       gearRatio: 1.4
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 4th
-      maxSpeed: 40.5
-      acceleration: 2.5
+      maxSpeed: 62.5
+      acceleration: 2.1410844
       gearRatio: 1
       rpmIncrease: 400
       rpmDecrease: 400
   - displayName: Police Sedan
     prefab: {fileID: 1990686775432796063, guid: 6f6eb58784d63b54bb8f0ad3bb052d9c, type: 3}
-    topSpeed: 190
-    acceleration: 5.8
-    handling: 0.62
-    shiftTolerance: 1
-    powerUp: 0
+    topSpeed: 180
+    acceleration: 6
+    handling: 0.75
+    shiftTolerance: 1.45
+    powerUp: 1
     powerUpChargeRequired: 100
     engineSound: {fileID: 0}
     maxRpm: 4000
@@ -212,36 +230,36 @@ MonoBehaviour:
     rpmDecrease: 400
     gears:
     - name: 1st
-      maxSpeed: 12
-      acceleration: 4
+      maxSpeed: 14.285714
+      acceleration: 8.28
       gearRatio: 3.5
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 2nd
-      maxSpeed: 18
-      acceleration: 3.5
+      maxSpeed: 23.809525
+      acceleration: 4.469692
       gearRatio: 2.1
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 3rd
-      maxSpeed: 27
-      acceleration: 3
+      maxSpeed: 35.714287
+      acceleration: 3.1666498
       gearRatio: 1.4
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 4th
-      maxSpeed: 40.5
-      acceleration: 2.5
+      maxSpeed: 50
+      acceleration: 2.3789825
       gearRatio: 1
       rpmIncrease: 400
       rpmDecrease: 400
   - displayName: SUV
     prefab: {fileID: 5343738931851003015, guid: c64b12108a29bbc4986ff4c053a01013, type: 3}
-    topSpeed: 175
-    acceleration: 5.8
-    handling: 0.5
-    shiftTolerance: 1
-    powerUp: 0
+    topSpeed: 190
+    acceleration: 6
+    handling: 0.6
+    shiftTolerance: 1.3
+    powerUp: 1
     powerUpChargeRequired: 100
     engineSound: {fileID: 0}
     maxRpm: 4000
@@ -249,26 +267,26 @@ MonoBehaviour:
     rpmDecrease: 400
     gears:
     - name: 1st
-      maxSpeed: 12
-      acceleration: 4
+      maxSpeed: 15.079366
+      acceleration: 8.28
       gearRatio: 3.5
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 2nd
-      maxSpeed: 18
-      acceleration: 3.5
+      maxSpeed: 25.132277
+      acceleration: 4.469692
       gearRatio: 2.1
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 3rd
-      maxSpeed: 27
-      acceleration: 3
+      maxSpeed: 37.698414
+      acceleration: 3.1666498
       gearRatio: 1.4
       rpmIncrease: 400
       rpmDecrease: 400
     - name: 4th
-      maxSpeed: 40.5
-      acceleration: 2.5
+      maxSpeed: 52.77778
+      acceleration: 2.3789825
       gearRatio: 1
       rpmIncrease: 400
       rpmDecrease: 400

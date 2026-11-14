@@ -82,6 +82,9 @@ public class Gearbox : MonoBehaviour
     public event System.Action ClutchPressed;     // clutch pressed
     public event System.Action<int> GearPicked;   // stick landed in a different gear: +1 = up, -1 = down
     public event System.Action NeutralMoved;      // stick moved sideways between neutrals
+    public event System.Action GearsChanged;      // gear set swapped (new car): the UI refreshes on this
+
+    public const int MaxGears = 6;                // the H-pattern UI supports up to 6 gears
 
     int targetGear = 1;
     int shiftDir;
@@ -190,8 +193,15 @@ public class Gearbox : MonoBehaviour
     public void Configure(GearSetting[] newGears)
     {
         if (newGears == null || newGears.Length == 0) { ResetToDefault(); return; }
+
         gears = CloneGears(newGears);
+        if (gears.Length > MaxGears)
+        {
+            Debug.LogWarning($"{name}: {gears.Length} gears configured, the maximum is {MaxGears}. Extra gears ignored.", this);
+            System.Array.Resize(ref gears, MaxGears);
+        }
         ResetState();
+        GearsChanged?.Invoke();
     }
 
     public void ResetToDefault()
@@ -199,6 +209,7 @@ public class Gearbox : MonoBehaviour
         if (defaultGears != null) gears = CloneGears(defaultGears);
         SetShiftTolerance(1f);
         ResetState();
+        GearsChanged?.Invoke();
     }
 
     void ResetState()

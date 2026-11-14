@@ -8,9 +8,10 @@ public class CarSpawner : MonoBehaviour
     [Tooltip("Opcional (útil para a IA): carros possíveis quando não há carro escolhido.")]
     public GameObject[] randomPool;
 
-    [Header("Catálogo (IA e testes sem menu)")]
+    [Header("Catálogo")]
+    [Tooltip("No Editor, se ficar vazio, procura o CarCatalog do projeto. Numa build tem de estar atribuído.")]
     public CarCatalog catalog;
-    [Tooltip("Índice no catálogo. -1 = aleatório na IA (e ignora o catálogo no jogador).")]
+    [Tooltip("Índice no catálogo. -1 = aleatório na IA; no jogador procura o carro pelo prefab.")]
     public int catalogIndex = -1;
 
     [Header("Ajustes")]
@@ -33,11 +34,17 @@ public class CarSpawner : MonoBehaviour
     [Tooltip("Como a aceleração cai nas mudanças altas. 1 = proporcional ao rácio da caixa. Menor = as altas aceleram mais.")]
     public float ratioExponent = 0.85f;
 
+    [Header("Diagnóstico")]
+    [Tooltip("Escreve na consola que carro e que stats foram aplicados, e de onde vieram.")]
+    public bool logStats = true;
+
     public GameObject CurrentCar { get; private set; }
     public CarStats CurrentStats { get; private set; }   // null = a usar defaults
+    public CarCatalog.Entry CurrentEntry => currentEntry;
 
     PlayerController player;
     CarCatalog.Entry currentEntry;
+    string currentSource = "?";
 
     PlayerController FindPlayer()
     {
@@ -49,35 +56,92 @@ public class CarSpawner : MonoBehaviour
 
     bool UseSelection => useMenuSelection && FindPlayer() != null;
 
+    CarCatalog Catalog
+    {
+        get
+        {
+#if UNITY_EDITOR
+            if (catalog == null)
+            {
+                string[] guids = UnityEditor.AssetDatabase.FindAssets("t:CarCatalog");
+                if (guids.Length > 0)
+                    catalog = UnityEditor.AssetDatabase.LoadAssetAtPath<CarCatalog>(
+                        UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]));
+            }
+#endif
+            return catalog;
+        }
+    }
+
+    // O power-up de TODOS os carros é o boost (turbo do PlayerController).
+    // Procura o valor do enum CarPowerUp pelo nome, para não depender de como está escrito.
+    public static bool TryGetBoost(out CarPowerUp boost)
+    {
+        boost = default;
+        string[] names = { "Boost", "Turbo", "SpeedBoost", "Nitro" };
+        foreach (string n in names)
+            if (System.Enum.TryParse(n, true, out boost))
+                return true;
+        boost = default;
+        return false;
+    }
+
     void Start()
     {
         GameObject prefab = chosenCarPrefab;
-        CarCatalog.Entry entry = null;
+        CarCatalog.Entry entry;
+        string source = "prefab do Inspector";
 
-        if (UseSelection && GameSelection.SelectedPrefab != null)
+        bool fromMenu = UseSelection &&
+            (GameSelection.SelectedPrefab != null || GameSelection.SelectedCar != null);
+
+        if (fromMenu)
         {
-            prefab = GameSelection.SelectedPrefab;
             entry = GameSelection.SelectedCar;
+            prefab = GameSelection.SelectedPrefab != null
+                ? GameSelection.SelectedPrefab
+                : entry != null ? entry.prefab : chosenCarPrefab;
+
+            // O menu pode ter guardado só o prefab: procura a entrada pelo prefab
+            if (entry == null) entry = FindEntry(prefab);
+            source = "menu";
         }
         else
         {
             entry = PickFromCatalog();
-            if (entry != null && entry.prefab != null) prefab = entry.prefab;
+            if (entry != null && entry.prefab != null)
+            {
+                prefab = entry.prefab;
+                source = "catálogo";
+            }
+            else if (prefab != null)
+            {
+                // Cena de corrida iniciada diretamente: usa os stats do catálogo para este prefab
+                entry = FindEntry(prefab);
+                if (entry != null) source = "catálogo (pelo prefab)";
+            }
         }
 
         if (prefab == null && randomPool != null && randomPool.Length > 0)
+        {
             prefab = randomPool[Random.Range(0, randomPool.Length)];
+            entry = FindEntry(prefab);
+            source = "pool aleatório";
+        }
 
         if (prefab != null)
-            Spawn(prefab, entry);
+            Spawn(prefab, entry, source);
+        else
+            Debug.LogWarning($"{name}: nenhum carro para instanciar.", this);
     }
 
     CarCatalog.Entry PickFromCatalog()
     {
-        if (catalog == null || catalog.cars == null || catalog.cars.Length == 0) return null;
+        CarCatalog c = Catalog;
+        if (c == null || c.cars == null || c.cars.Length == 0) return null;
 
-        int len = catalog.cars.Length;
-        if (catalogIndex >= 0) return catalog.cars[Mathf.Clamp(catalogIndex, 0, len - 1)];
+        int len = c.cars.Length;
+        if (catalogIndex >= 0) return c.cars[Mathf.Clamp(catalogIndex, 0, len - 1)];
 
         // Jogador sem índice: usa o prefab atribuído
         if (FindPlayer() != null) return null;
@@ -85,27 +149,44 @@ public class CarSpawner : MonoBehaviour
         // IA: aleatório, evitando o carro do jogador
         for (int i = 0; i < 8; i++)
         {
-            var e = catalog.cars[Random.Range(0, len)];
+            var e = c.cars[Random.Range(0, len)];
             if (e.prefab != null && e != GameSelection.SelectedCar) return e;
         }
-        return catalog.cars[Random.Range(0, len)];
+        return c.cars[Random.Range(0, len)];
+    }
+
+    CarCatalog.Entry FindEntry(GameObject prefab)
+    {
+        CarCatalog c = Catalog;
+        if (c == null || c.cars == null || prefab == null) return null;
+
+        foreach (var e in c.cars)
+            if (e != null && e.prefab == prefab) return e;
+        foreach (var e in c.cars)
+            if (e != null && e.prefab != null && e.prefab.name == prefab.name) return e;
+        return null;
     }
 
     // Chama isto a partir do menu de escolha quando o jogador escolher
-    public void SpawnCar(GameObject prefab) =>
-        Spawn(prefab, UseSelection ? GameSelection.SelectedCar : null);
+    public void SpawnCar(GameObject prefab)
+    {
+        CarCatalog.Entry entry = UseSelection ? GameSelection.SelectedCar : null;
+        if (entry == null) entry = FindEntry(prefab);
+        Spawn(prefab, entry, "SpawnCar");
+    }
 
     public void SpawnCar(CarCatalog.Entry entry)
     {
-        if (entry != null && entry.prefab != null) Spawn(entry.prefab, entry);
+        if (entry != null && entry.prefab != null) Spawn(entry.prefab, entry, "SpawnCar(entrada)");
     }
 
-    void Spawn(GameObject prefab, CarCatalog.Entry entry)
+    void Spawn(GameObject prefab, CarCatalog.Entry entry, string source)
     {
         if (CurrentCar != null)
             Destroy(CurrentCar);
 
         currentEntry = entry;
+        currentSource = source;
 
         Quaternion rot = transform.rotation * Quaternion.Euler(rotationOffset);
         CurrentCar = Instantiate(prefab, transform.position, rot, transform);
@@ -138,7 +219,7 @@ public class CarSpawner : MonoBehaviour
             CurrentStats.acceleration = entry.acceleration;
             CurrentStats.handling = entry.handling;
             CurrentStats.shiftTolerance = entry.shiftTolerance;
-            CurrentStats.powerUp = entry.powerUp;
+            CurrentStats.powerUp = TryGetBoost(out CarPowerUp boost) ? boost : entry.powerUp;
             CurrentStats.powerUpChargeRequired = entry.powerUpChargeRequired;
             CurrentStats.engineSound = entry.engineSound;
             CurrentStats.maxRpm = entry.maxRpm;
@@ -155,23 +236,45 @@ public class CarSpawner : MonoBehaviour
 
         // Só o player tem Gearbox
         PlayerController p = FindPlayer();
-        if (p == null || p.gearbox == null) return;
-
-        if (CurrentStats != null)
+        if (p != null && p.gearbox != null)
         {
-            p.gearbox.Configure(CurrentStats.gears);
-            p.gearbox.SetShiftTolerance(CurrentStats.shiftTolerance);
-            if (CurrentStats.maxRpm > 0f) p.gearbox.limiterRpm = CurrentStats.maxRpm;
-            if (CurrentStats.rpmDecrease > 0f) p.gearbox.fallRate = CurrentStats.rpmDecrease;
-        }
-        else
-            p.gearbox.ResetToDefault();   // carro sem stats: usa os defaults
+            if (CurrentStats != null)
+            {
+                p.gearbox.Configure(CurrentStats.gears);
+                p.gearbox.SetShiftTolerance(CurrentStats.shiftTolerance);
+                if (CurrentStats.maxRpm > 0f) p.gearbox.limiterRpm = CurrentStats.maxRpm;
+                if (CurrentStats.rpmDecrease > 0f) p.gearbox.fallRate = CurrentStats.rpmDecrease;
+            }
+            else
+                p.gearbox.ResetToDefault();   // carro sem stats: usa os defaults
 
-        RaceSplineFollower follower = p.GetComponent<RaceSplineFollower>();
-        if (follower == null) follower = p.GetComponentInChildren<RaceSplineFollower>();
-        if (follower == null) follower = p.GetComponentInParent<RaceSplineFollower>();
-        if (follower != null)
-            follower.InitializeFromCurrentPosition();
+            RaceSplineFollower follower = p.GetComponent<RaceSplineFollower>();
+            if (follower == null) follower = p.GetComponentInChildren<RaceSplineFollower>();
+            if (follower == null) follower = p.GetComponentInParent<RaceSplineFollower>();
+            if (follower != null)
+                follower.InitializeFromCurrentPosition();
+        }
+
+        if (logStats) LogApplied(p != null ? p.gearbox : null);
+    }
+
+    void LogApplied(Gearbox gearbox)
+    {
+        bool isPlayer = gearbox != null;
+        string who = isPlayer ? "JOGADOR" : "IA";
+        if (CurrentStats == null)
+        {
+            Debug.Log($"[CarSpawner] {who} ({name}): {CurrentCar.name} | fonte: {currentSource} | " +
+                      "SEM STATS (a usar os defaults do Gearbox). Falta CarCatalog ou entrada para este prefab.", this);
+            return;
+        }
+
+        int gears = CurrentStats.gears != null ? CurrentStats.gears.Length : 0;
+        Debug.Log($"[CarSpawner] {who} ({name}): {CurrentCar.name} | fonte: {currentSource} | " +
+                  $"{CurrentStats.maxSpeed:F0} km/h | acel {CurrentStats.acceleration:F1} | " +
+                  $"handling {CurrentStats.handling:F2} | {gears} mudanças | " +
+                  $"tolerância {CurrentStats.shiftTolerance:F2} | power-up {CurrentStats.powerUp}" +
+                  (isPlayer ? $" | Gearbox '{gearbox.name}' ficou com {gearbox.GearCount} mudanças" : ""), this);
     }
 
     // Velocidade de cada mudança ∝ 1/rácio (a última = topo do carro).
@@ -183,7 +286,7 @@ public class CarSpawner : MonoBehaviour
     {
         if (source == null || source.Length == 0) return null;
 
-        int n = source.Length;
+        int n = Mathf.Min(source.Length, Gearbox.MaxGears);
         var copy = new Gearbox.GearSetting[n];
 
         // Os rácios têm de ser positivos e a descer (1ª = maior)

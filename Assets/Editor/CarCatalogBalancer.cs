@@ -1,3 +1,4 @@
+// Colocar em Assets/Editor/ (a pasta tem de se chamar exatamente "Editor")
 using UnityEditor;
 using UnityEngine;
 
@@ -8,12 +9,15 @@ public static class CarCatalogBalancer
     const float FirstGearBoost = 1.2f;
     const float RatioExponent = 0.85f;
 
+    // O power-up é igual em todos os carros (boost)
+    const float PowerUpCharge = 100f;
+
     class Car
     {
         public string name;
         public float topKmh, accel, handling, tolerance;
         public int gears;
-        public Car(string name, float topKmh, float accel, float handling, int gears, float tolerance = 1f)
+        public Car(string name, float topKmh, float accel, float handling, int gears, float tolerance)
         {
             this.name = name; this.topKmh = topKmh; this.accel = accel;
             this.handling = handling; this.gears = gears; this.tolerance = tolerance;
@@ -28,7 +32,7 @@ public static class CarCatalogBalancer
         new Car("SUV",           190f, 6.0f, 0.60f, 4, 1.30f),
         new Car("Muscle",        170f, 8.5f, 0.45f, 4, 1.15f),
         new Car("Ambulance",     225f, 5.4f, 0.52f, 4, 1.20f),
-        new Car("Sports",        250f, 8.2f, 0.28f, 6, 0.80f),
+        new Car("Sports",        245f, 8.2f, 0.32f, 6, 1.10f),
         new Car("Muscly",        225f, 7.0f, 0.38f, 5, 1.00f),
         new Car("Police Muscle", 215f, 8.2f, 0.33f, 5, 0.90f),
         new Car("Police Sports", 250f, 8.2f, 0.28f, 6, 0.80f),
@@ -53,6 +57,14 @@ public static class CarCatalogBalancer
         SerializedProperty cars = so.FindProperty("cars");
         if (cars == null) { Debug.LogError("Campo 'cars' não encontrado no CarCatalog."); return; }
 
+        bool hasBoost = CarSpawner.TryGetBoost(out CarPowerUp boost);
+        if (!hasBoost)
+        {
+            Debug.LogWarning("Nenhum valor 'Boost' (ou Turbo/SpeedBoost/Nitro) no enum CarPowerUp. " +
+                             "O power-up não foi alterado. Valores existentes: " +
+                             string.Join(", ", System.Enum.GetNames(typeof(CarPowerUp))));
+        }
+
         int applied = 0;
         for (int i = 0; i < cars.arraySize; i++)
         {
@@ -70,6 +82,9 @@ public static class CarCatalogBalancer
             SetNumber(entry, "topSpeed", car.topKmh);
             SetNumber(entry, "acceleration", car.accel);
             SetNumber(entry, "handling", car.handling);
+            SetNumber(entry, "shiftTolerance", car.tolerance);
+            SetNumber(entry, "powerUpChargeRequired", PowerUpCharge);
+            if (hasBoost) SetPowerUp(entry, boost);
             WriteGears(entry.FindPropertyRelative("gears"), car);
             applied++;
         }
@@ -85,6 +100,15 @@ public static class CarCatalogBalancer
         foreach (Car c in Table)
             if (c.name == name) return c;
         return null;
+    }
+
+    static void SetPowerUp(SerializedProperty entry, CarPowerUp boost)
+    {
+        SerializedProperty p = entry.FindPropertyRelative("powerUp");
+        if (p == null || p.propertyType != SerializedPropertyType.Enum) return;
+
+        int index = System.Array.IndexOf(p.enumNames, boost.ToString());
+        if (index >= 0) p.enumValueIndex = index;
     }
 
     static void WriteGears(SerializedProperty gears, Car car)

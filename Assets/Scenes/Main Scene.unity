@@ -7479,6 +7479,7 @@ MonoBehaviour:
   launchAccelPerStat: 1.15
   firstGearBoost: 1.2
   ratioExponent: 0.85
+  logStats: 1
 --- !u!4 &419274670
 Transform:
   m_ObjectHideFlags: 0
@@ -10259,7 +10260,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3490954750374979181, guid: 1d47af51714f7774fb25b2afed9a6f34, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.049328238
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3490954750374979181, guid: 1d47af51714f7774fb25b2afed9a6f34, type: 3}
       propertyPath: m_LocalPosition.z
@@ -12571,6 +12572,7 @@ GameObject:
   - component: {fileID: 705069055}
   - component: {fileID: 705069054}
   - component: {fileID: 705069053}
+  - component: {fileID: 705069059}
   m_Layer: 0
   m_Name: AI_Car
   m_TagString: Untagged
@@ -12601,6 +12603,7 @@ MonoBehaviour:
   launchAccelPerStat: 1.15
   firstGearBoost: 1.2
   ratioExponent: 0.85
+  logStats: 1
 --- !u!114 &705069054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12796,6 +12799,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &705069059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 705069052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6478899aabbccddeeff01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CarAnimationController
+  turnRoll: 7
+  turnYaw: 2
+  skidRoll: 10
+  skidYaw: 12
+  animationSmoothing: 10
+  skidDuration: 0.6
 --- !u!4 &708938667 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d25c6412b5745254bbf7afe5726a18d1, type: 3}
@@ -19126,9 +19147,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8322238947764832443, guid: bcdd9e37aa281cf4bab98ccc110bbaef, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1198092216}
-    - targetCorrespondingSourceObject: {fileID: 8322238947764832443, guid: bcdd9e37aa281cf4bab98ccc110bbaef, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1198092215}
   m_SourcePrefab: {fileID: 100100000, guid: bcdd9e37aa281cf4bab98ccc110bbaef, type: 3}
 --- !u!1 &1198092214 stripped
@@ -19145,57 +19163,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1198092214}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6244e8f309fd2f4458c956cc1eac5ea6, type: 3}
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f6478899aabbccddeeff01, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RpmZoneArc
-  radius: 58
-  thickness: 8
-  centerOffset: {x: 0, y: 29}
-  elementSize: 256
-  inFrontOfGauge: 0
-  syncNeedleToArc: 1
-  idleColor: {r: 1, g: 1, b: 1, a: 1}
-  redColor: {r: 0.9, g: 0.15, b: 0.15, a: 1}
-  yellowColor: {r: 1, g: 0.85, b: 0.1, a: 1}
-  greenColor: {r: 0.2, g: 0.85, b: 0.3, a: 1}
---- !u!114 &1198092216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1198092214}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 004cb5c47c65dcb4cb36e9204e616c9e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CarHUD
-  player: {fileID: 419274666}
-  manipuloNormal: {fileID: 0}
-  manipuloUp: {fileID: 0}
-  manipuloDown: {fileID: 0}
-  pedalNormal: {fileID: 0}
-  pedalPressed: {fileID: 0}
-  pedalBottomNormal: -27
-  pedalBottomPressed: -36
-  gearScreenNormal: {fileID: 0}
-  gearScreenUp5: {fileID: 0}
-  gearScreenUp6: {fileID: 0}
-  gearPromptBlinkSpeed: 5
-  column0X: -18
-  columnStep: 36
-  neutralY: 44
-  topY: 88
-  bottomY: -42
-  knobSmoothing: 30
-  rpmMinAngle: -120
-  rpmMaxAngle: 120
-  rpmNeedleAngleOffset: -5
-  maxSpeedKmh: 160
-  speedMinAngle: -120
-  speedMaxAngle: 120
-  powerUpBarWidth: 240
-  needleSmoothing: 12
+  m_EditorClassIdentifier: Assembly-CSharp::CarAnimationController
+  turnRoll: 7
+  turnYaw: 2
+  skidRoll: 10
+  skidYaw: 12
+  animationSmoothing: 10
+  skidDuration: 0.6
 --- !u!4 &1205615766 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d86c5e42e1890b24c881f293e08bfb20, type: 3}
