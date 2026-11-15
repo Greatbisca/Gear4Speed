@@ -28,6 +28,8 @@ public class CarSelectMenu : MonoBehaviour
     [Header("Showroom")]
     [SerializeField] float spinSpeed = 30f;
     [SerializeField] string raceScene = "Player";
+    [SerializeField] string tutorialScene = "Tutorial";
+    [SerializeField] bool showTutorialOnlyOnce = false; 
     [SerializeField] string menuScene = "Menus";
 
     Image[] speedPips, accPips, handlingPips;
@@ -117,7 +119,9 @@ public class CarSelectMenu : MonoBehaviour
         GameSelection.CarIndex = index;
         GameSelection.SelectedPrefab = catalog.cars[index].prefab;
         GameSelection.SelectedCar = catalog.cars[index];
-        SceneManager.LoadScene(raceScene);
+
+        bool skip = showTutorialOnlyOnce && PlayerPrefs.GetInt("tutorialSeen", 0) == 1;
+        SceneManager.LoadScene(skip ? raceScene : tutorialScene);
     }
 
     public void Back() => SceneManager.LoadScene(menuScene);

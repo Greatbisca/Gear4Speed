@@ -1,7 +1,6 @@
 
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
@@ -23,7 +22,7 @@ public class TutorialManager : MonoBehaviour
     }
 
     [Header("UI References")]
-    public TMP_Text tutorialText;
+    public Text tutorialText;
     public RectTransform textTransform;
     public RectTransform arrowTransform;
     public GameObject arrowObject;
